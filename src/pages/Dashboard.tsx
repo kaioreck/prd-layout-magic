@@ -5,7 +5,6 @@ import StatCard from '@/components/dashboard/StatCard';
 import RevenueChart from '@/components/dashboard/RevenueChart';
 import ComparisonChart from '@/components/dashboard/ComparisonChart';
 import AppointmentStats from '@/components/dashboard/AppointmentStats';
-import { DateRange } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
 
 const Dashboard: React.FC = () => {
