@@ -69,7 +69,7 @@ export default {
 					mediumBlue: '#427ED7',
 					lightBlue: '#5F95E7',
 					paleBlue: '#97BDF5',
-					orange: '#E84E0F',
+					orange: '#256EDC',
 				}
 			},
 			borderRadius: {

@@ -35,14 +35,14 @@
 
     --radius: 0.5rem;
 
-    --sidebar-background: 24 86% 48%;
+    --sidebar-background: 216 86% 35%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 24 86% 48%;
+    --sidebar-primary: 216 86% 35%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 24 90% 52%;
+    --sidebar-accent: 213 86% 50%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 24 90% 40%;
-    --sidebar-ring: 24 86% 48%;
+    --sidebar-border: 216 90% 25%;
+    --sidebar-ring: 216 86% 35%;
   }
 }
 
@@ -62,7 +62,7 @@
 }
 
 .sidebar-icon {
-  @apply flex items-center justify-center w-full p-2 text-white transition-colors rounded-md hover:bg-trinks-orange/80;
+  @apply flex items-center justify-center w-full p-2 text-white transition-colors rounded-md hover:bg-trinks-blue/80;
 }
 
 .sidebar-icon.active {
