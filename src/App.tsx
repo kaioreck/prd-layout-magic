@@ -17,6 +17,12 @@ import Marketing from "./pages/Marketing";
 import MyPlan from "./pages/MyPlan";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import MainReports from "./pages/MainReports";
+import DashboardReports from "./pages/DashboardReports";
+import ResultsReport from "./pages/ResultsReport";
+import Rankings from "./pages/Rankings";
+import SatisfactionSurvey from "./pages/SatisfactionSurvey";
+import HeatMap from "./pages/HeatMap";
 
 const queryClient = new QueryClient();
 
@@ -32,8 +38,14 @@ const App = () => (
             <Route path="agenda" element={<Schedule />} />
             <Route path="estabelecimento" element={<Establishment />} />
             <Route path="financeiro" element={<FinancialControl />} />
-            <Route path="relatorios/retorno" element={<ReturnReports />} />
+            <Route path="relatorios/principais" element={<MainReports />} />
+            <Route path="relatorios/dashboard" element={<DashboardReports />} />
+            <Route path="relatorios/demonstrativo" element={<ResultsReport />} />
+            <Route path="relatorios/rankings" element={<Rankings />} />
             <Route path="relatorios/rankings/produtos" element={<ProductRanking />} />
+            <Route path="relatorios/pesquisa" element={<SatisfactionSurvey />} />
+            <Route path="relatorios/mapa-calor" element={<HeatMap />} />
+            <Route path="relatorios/retorno" element={<ReturnReports />} />
             <Route path="marketing" element={<Marketing />} />
             <Route path="marketing/whatsapp-invitation" element={<WhatsAppInvitation />} />
             <Route path="plano" element={<MyPlan />} />

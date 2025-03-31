@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   Home, Calendar, Store, DollarSign, BarChart, 
-  MessageSquare, Settings, Users, ChevronRight, ChevronLeft 
+  MessageSquare, Settings, Users, ChevronRight, ChevronLeft,
+  FileText, PieChart, Activity, ChartBar
 } from 'lucide-react';
 
 interface SidebarItemProps {
