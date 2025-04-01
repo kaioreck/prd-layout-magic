@@ -82,6 +82,18 @@ const Schedule: React.FC = () => {
   });
   const [calendarOpen, setCalendarOpen] = useState(false);
 
+  // Function to open the appointment dialog with default values
+  const scheduleNow = () => {
+    setNewAppointment({
+      clientName: '',
+      clientPhone: '',
+      service: 1,
+      date: new Date(),
+      time: '09:00'
+    });
+    setIsAddDialogOpen(true);
+  };
+
   // Formatar data
   const formatDate = (date: Date): string => {
     return format(date, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR });
