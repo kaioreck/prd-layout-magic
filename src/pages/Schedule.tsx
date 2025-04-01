@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Calendar as CalendarIcon, Clock, List, ChevronLeft, ChevronRight, Plus, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -18,7 +17,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
-import { format, addDays, isSameDay } from 'date-fns';
+import { format, addDays, subDays, isSameDay, startOfWeek, endOfWeek, eachDayOfInterval, startOfMonth, endOfMonth, getDay, isWithinInterval } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -91,11 +90,27 @@ const Schedule: React.FC = () => {
   // Navegar entre datas
   const navigateDate = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentDate);
-    if (direction === 'next') {
-      newDate.setDate(newDate.getDate() + 1);
-    } else {
-      newDate.setDate(newDate.getDate() - 1);
+    
+    if (currentView === 'day') {
+      if (direction === 'next') {
+        newDate.setDate(newDate.getDate() + 1);
+      } else {
+        newDate.setDate(newDate.getDate() - 1);
+      }
+    } else if (currentView === 'week') {
+      if (direction === 'next') {
+        newDate.setDate(newDate.getDate() + 7);
+      } else {
+        newDate.setDate(newDate.getDate() - 7);
+      }
+    } else if (currentView === 'month') {
+      if (direction === 'next') {
+        newDate.setMonth(newDate.getMonth() + 1);
+      } else {
+        newDate.setMonth(newDate.getMonth() - 1);
+      }
     }
+    
     setCurrentDate(newDate);
   };
 
@@ -166,16 +181,38 @@ const Schedule: React.FC = () => {
     });
   };
 
-  // Função para agendar agora
-  const scheduleNow = () => {
-    setNewAppointment({
-      ...newAppointment,
-      date: currentDate
-    });
-    setIsAddDialogOpen(true);
+  // Função para calcular os dias da semana atual
+  const getCurrentWeekDays = () => {
+    const start = startOfWeek(currentDate, { weekStartsOn: 0 });
+    const end = endOfWeek(currentDate, { weekStartsOn: 0 });
+    return eachDayOfInterval({ start, end });
   };
 
-  // Função para popular timeSlots
+  // Função para obter os agendamentos de um dia específico
+  const getAppointmentsForDay = (date: Date) => {
+    return appointments.filter(app => isSameDay(app.date, date));
+  };
+
+  // Função para formatar cabeçalho da semana
+  const formatWeekHeader = () => {
+    const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 });
+    const weekEnd = endOfWeek(currentDate, { weekStartsOn: 0 });
+    const startMonth = format(weekStart, 'MMMM', { locale: ptBR });
+    const endMonth = format(weekEnd, 'MMMM', { locale: ptBR });
+    
+    if (startMonth === endMonth) {
+      return `${format(weekStart, "dd", { locale: ptBR })} - ${format(weekEnd, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}`;
+    } else {
+      return `${format(weekStart, "dd 'de' MMMM", { locale: ptBR })} - ${format(weekEnd, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}`;
+    }
+  };
+
+  // Função para formatar cabeçalho do mês
+  const formatMonthHeader = () => {
+    return format(currentDate, "MMMM 'de' yyyy", { locale: ptBR });
+  };
+
+  // Função para popular timeSlots do dia
   const populateTimeSlots = () => {
     const todayAppointments = getTodayAppointments();
     
@@ -183,6 +220,32 @@ const Schedule: React.FC = () => {
       const appointment = todayAppointments.find(app => app.time === time);
       return { time, appointment };
     });
+  };
+
+  // Função para obter dias do mês atual para o calendário
+  const getMonthDays = () => {
+    const start = startOfMonth(currentDate);
+    const end = endOfMonth(currentDate);
+    
+    // Obter o primeiro dia da semana do mês (0 = domingo, 1 = segunda, etc.)
+    const firstDayOfMonth = getDay(start);
+    
+    // Adicionar dias do mês anterior para completar a primeira semana
+    const daysFromPrevMonth = Array.from({ length: firstDayOfMonth }, (_, i) => {
+      return subDays(start, firstDayOfMonth - i);
+    });
+    
+    // Adicionar dias do mês atual
+    const daysInMonth = eachDayOfInterval({ start, end });
+    
+    // Calcular quantos dias do próximo mês precisamos para completar a grade
+    const totalDaysToShow = 42; // 6 semanas x 7 dias
+    const daysFromNextMonth = Array.from(
+      { length: totalDaysToShow - daysFromPrevMonth.length - daysInMonth.length },
+      (_, i) => addDays(end, i + 1)
+    );
+    
+    return [...daysFromPrevMonth, ...daysInMonth, ...daysFromNextMonth];
   };
 
   // Componente de slot de horário
@@ -241,6 +304,59 @@ const Schedule: React.FC = () => {
     );
   };
 
+  // Componente para célula de dia no calendário mensal
+  interface DayCellProps {
+    date: Date;
+    isCurrentMonth: boolean;
+    appointments: Appointment[];
+    onClick: () => void;
+  }
+
+  const DayCell: React.FC<DayCellProps> = ({ date, isCurrentMonth, appointments, onClick }) => {
+    const isToday = isSameDay(date, new Date());
+    
+    return (
+      <div 
+        className={`border p-1 min-h-24 ${isCurrentMonth ? 'bg-white' : 'bg-gray-50'} 
+                   ${isToday ? 'border-trinks-blue' : 'border-gray-200'} 
+                   cursor-pointer hover:bg-gray-50`}
+        onClick={onClick}
+      >
+        <div className={`text-right mb-1 ${isCurrentMonth ? 'font-medium' : 'text-gray-400'}`}>
+          {format(date, 'd')}
+        </div>
+        <div className="overflow-y-auto max-h-20">
+          {appointments.map((app, idx) => (
+            <div 
+              key={idx} 
+              className="text-xs p-1 mb-1 bg-trinks-blue/10 border-l-2 border-trinks-blue rounded truncate"
+              title={`${app.time} - ${serviceTypes.find(s => s.id === app.service)?.name} - ${app.clientName}`}
+            >
+              {app.time} - {app.clientName.split(' ')[0]}
+            </div>
+          ))}
+          {appointments.length === 0 && isCurrentMonth && (
+            <Button 
+              variant="ghost" 
+              className="w-full h-6 p-0 text-xs text-gray-400 justify-start hover:text-trinks-blue"
+              onClick={(e) => {
+                e.stopPropagation();
+                setNewAppointment({
+                  ...newAppointment,
+                  date: date,
+                  time: '09:00'
+                });
+                setIsAddDialogOpen(true);
+              }}
+            >
+              <Plus className="w-3 h-3 mr-1" /> Agendar
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="p-4 md:p-6">
       <div className="mb-6 flex justify-between items-center">
@@ -271,7 +387,9 @@ const Schedule: React.FC = () => {
       <div className="mb-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <h2 className="text-lg md:text-xl font-medium text-gray-800 capitalize">
-            {formatDate(currentDate)}
+            {currentView === 'day' && formatDate(currentDate)}
+            {currentView === 'week' && formatWeekHeader()}
+            {currentView === 'month' && formatMonthHeader()}
           </h2>
           
           <div className="flex items-center space-x-2">
@@ -301,11 +419,10 @@ const Schedule: React.FC = () => {
               </PopoverContent>
             </Popover>
             
-            <Tabs defaultValue="day" className="w-auto">
+            <Tabs defaultValue={currentView} className="w-auto" onValueChange={(value) => setCurrentView(value as 'day' | 'week' | 'month')}>
               <TabsList>
                 <TabsTrigger 
                   value="day" 
-                  onClick={() => setCurrentView('day')}
                   className={isMobile ? "px-2" : ""}
                 >
                   <CalendarIcon className="w-4 h-4 mr-1 md:mr-2" />
@@ -313,7 +430,6 @@ const Schedule: React.FC = () => {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="week" 
-                  onClick={() => setCurrentView('week')}
                   className={isMobile ? "px-2" : ""}
                 >
                   <CalendarIcon className="w-4 h-4 mr-1 md:mr-2" />
@@ -321,7 +437,6 @@ const Schedule: React.FC = () => {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="month" 
-                  onClick={() => setCurrentView('month')}
                   className={isMobile ? "px-2" : ""}
                 >
                   <CalendarIcon className="w-4 h-4 mr-1 md:mr-2" />
@@ -338,17 +453,117 @@ const Schedule: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        <div className="grid grid-cols-1 divide-y">
-          {populateTimeSlots().map((slot, index) => (
-            <TimeSlot 
-              key={index} 
-              time={slot.time} 
-              appointment={slot.appointment} 
-            />
-          ))}
+      {currentView === 'day' && (
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div className="grid grid-cols-1 divide-y">
+            {populateTimeSlots().map((slot, index) => (
+              <TimeSlot 
+                key={index} 
+                time={slot.time} 
+                appointment={slot.appointment} 
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {currentView === 'week' && (
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div className="grid grid-cols-7 border-b">
+            {getCurrentWeekDays().map((day, index) => (
+              <div 
+                key={index} 
+                className={`text-center p-2 ${isSameDay(day, new Date()) ? 'bg-trinks-blue/10 font-medium' : ''}`}
+              >
+                <p className="text-sm text-gray-500">{format(day, 'EEEEEE', { locale: ptBR })}</p>
+                <p className={`text-lg ${isSameDay(day, currentDate) ? 'font-bold text-trinks-blue' : ''}`}>
+                  {format(day, 'd')}
+                </p>
+              </div>
+            ))}
+          </div>
+          
+          <div className="grid grid-cols-7 divide-x">
+            {getCurrentWeekDays().map((day, dayIndex) => (
+              <div key={dayIndex} className="min-h-[500px]">
+                <div 
+                  className={`text-center p-2 cursor-pointer hover:bg-gray-50 ${isSameDay(day, currentDate) ? 'bg-gray-50' : ''}`}
+                  onClick={() => setCurrentDate(day)}
+                >
+                  {format(day, 'dd/MM')}
+                </div>
+                <div className="max-h-[468px] overflow-y-auto">
+                  {getAppointmentsForDay(day).length > 0 ? (
+                    <div className="p-2 space-y-2">
+                      {getAppointmentsForDay(day).map((app, appIndex) => {
+                        const serviceName = serviceTypes.find(s => s.id === app.service)?.name || '';
+                        return (
+                          <div 
+                            key={appIndex}
+                            className="bg-trinks-blue/10 border-l-4 border-trinks-blue p-2 rounded-r-md text-xs"
+                          >
+                            <p className="font-medium">{app.time} - {serviceName}</p>
+                            <p>{app.clientName}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="p-2 text-center">
+                      <Button 
+                        variant="ghost" 
+                        className="text-xs text-gray-400 hover:text-trinks-blue"
+                        onClick={() => {
+                          setNewAppointment({
+                            ...newAppointment,
+                            date: day,
+                            time: '09:00'
+                          });
+                          setIsAddDialogOpen(true);
+                        }}
+                      >
+                        <Plus className="w-3 h-3 mr-1" /> Agendar
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {currentView === 'month' && (
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div className="grid grid-cols-7 border-b">
+            {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map((day, index) => (
+              <div key={index} className="text-center p-2 font-medium text-gray-700">
+                {day}
+              </div>
+            ))}
+          </div>
+          
+          <div className="grid grid-cols-7">
+            {getMonthDays().map((date, index) => {
+              const isCurrentMonth = date.getMonth() === currentDate.getMonth();
+              const dayAppointments = getAppointmentsForDay(date);
+              
+              return (
+                <DayCell 
+                  key={index}
+                  date={date}
+                  isCurrentMonth={isCurrentMonth}
+                  appointments={dayAppointments}
+                  onClick={() => {
+                    setCurrentDate(date);
+                    setCurrentView('day');
+                  }}
+                />
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Diálogo de novo agendamento */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
