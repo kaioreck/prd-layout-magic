@@ -24,7 +24,11 @@ import Rankings from "./pages/Rankings";
 import SatisfactionSurvey from "./pages/SatisfactionSurvey";
 import HeatMap from "./pages/HeatMap";
 
+// Cria um cliente do React Query
 const queryClient = new QueryClient();
+
+// Define o título do documento
+document.title = "Barber.IA";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
