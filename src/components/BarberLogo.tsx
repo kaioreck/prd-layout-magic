@@ -14,7 +14,7 @@ const BarberLogo: React.FC = () => {
           className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} object-contain`}
         />
       </div>
-      <span className={`${isMobile ? 'text-lg' : 'text-2xl'} font-bold text-white ml-2`}>Barber.IA</span>
+      <span className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold text-white ml-2`}>Barber.IA</span>
     </div>
   );
 };
