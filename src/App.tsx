@@ -10,10 +10,8 @@ import Dashboard from "./pages/Dashboard";
 import FinancialControl from "./pages/FinancialControl";
 import ReturnReports from "./pages/ReturnReports";
 import ProductRanking from "./pages/ProductRanking";
-import WhatsAppInvitation from "./pages/WhatsAppInvitation";
 import Schedule from "./pages/Schedule";
 import Establishment from "./pages/Establishment";
-import Marketing from "./pages/Marketing";
 import MyPlan from "./pages/MyPlan";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
@@ -50,8 +48,6 @@ const App = () => (
             <Route path="relatorios/pesquisa" element={<SatisfactionSurvey />} />
             <Route path="relatorios/mapa-calor" element={<HeatMap />} />
             <Route path="relatorios/retorno" element={<ReturnReports />} />
-            <Route path="marketing" element={<Marketing />} />
-            <Route path="marketing/whatsapp-invitation" element={<WhatsAppInvitation />} />
             <Route path="plano" element={<MyPlan />} />
             <Route path="configuracoes" element={<Settings />} />
           </Route>

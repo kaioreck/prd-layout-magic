@@ -22,7 +22,7 @@ const Establishment: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <h3 className="text-sm font-medium text-gray-500 mb-1">Nome do Estabelecimento</h3>
-                <p className="text-gray-800">Teste12341234</p>
+                <p className="text-gray-800">Barber.IA</p>
               </div>
               
               <div>
@@ -30,9 +30,7 @@ const Establishment: React.FC = () => {
                 <div className="flex items-start">
                   <MapPin className="w-4 h-4 text-gray-500 mr-2 mt-0.5" />
                   <p className="text-gray-800">
-                    Rua Exemplo, 123<br />
-                    Bairro Teste<br />
-                    São Paulo, SP - 00000-000
+                    UNIEURO
                   </p>
                 </div>
               </div>
@@ -42,8 +40,8 @@ const Establishment: React.FC = () => {
                 <div className="flex items-start">
                   <Clock className="w-4 h-4 text-gray-500 mr-2 mt-0.5" />
                   <div>
-                    <p className="text-gray-800">Segunda - Sexta: 9:00 - 18:00</p>
-                    <p className="text-gray-800">Sábado: 9:00 - 13:00</p>
+                    <p className="text-gray-800">Segunda - Sexta: 08:00 - 18:00</p>
+                    <p className="text-gray-800">Sábado: 08:00 - 16:00</p>
                     <p className="text-gray-800">Domingo: Fechado</p>
                   </div>
                 </div>
@@ -53,7 +51,7 @@ const Establishment: React.FC = () => {
                 <h3 className="text-sm font-medium text-gray-500 mb-1">Contato</h3>
                 <div className="flex items-center">
                   <Phone className="w-4 h-4 text-gray-500 mr-2" />
-                  <p className="text-gray-800">(11) 99999-9999</p>
+                  <p className="text-gray-800">(61) 9 7070-7070</p>
                 </div>
               </div>
             </div>
@@ -76,12 +74,12 @@ const Establishment: React.FC = () => {
             <div className="space-y-4">
               <div className="flex items-center">
                 <Globe className="w-4 h-4 text-gray-500 mr-2" />
-                <p className="text-gray-800">www.teste12341234.trinks.com</p>
+                <p className="text-gray-800">www.barberia.com.br</p>
               </div>
               
               <div className="flex items-center">
                 <Instagram className="w-4 h-4 text-gray-500 mr-2" />
-                <p className="text-gray-800">@teste12341234</p>
+                <p className="text-gray-800">@barber.ia</p>
               </div>
             </div>
             

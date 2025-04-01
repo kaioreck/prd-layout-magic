@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   Home, Calendar, Store, DollarSign, BarChart, 
-  MessageSquare, Settings, Users, ChevronRight, ChevronLeft,
+  Settings, Users, ChevronRight, ChevronLeft,
   FileText, PieChart, Activity, ChartBar, X
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -216,13 +216,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
               />
             )}
             
-            <SidebarItem 
-              icon={<MessageSquare className="w-5 h-5" />} 
-              label="Marketing" 
-              to="/marketing" 
-              isActive={isRouteActive('/marketing')}
-              onClick={handleItemClick}
-            />
             <SidebarItem 
               icon={<Users className="w-5 h-5" />} 
               label="Meu Plano" 
