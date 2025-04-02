@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -10,8 +9,8 @@ import BasicInfoForm from '@/components/establishment/BasicInfoForm';
 import SocialMediaForm from '@/components/establishment/SocialMediaForm';
 import TeamButton from '@/components/establishment/TeamButton';
 
-// Estado inicial com os dados do estabelecimento
-const initialEstablishmentData = {
+// Default initial state for the establishment data
+const defaultEstablishmentData = {
   name: 'Barber.IA',
   address: 'UNIEURO',
   schedule: {
@@ -28,21 +27,33 @@ const initialEstablishmentData = {
 };
 
 const Establishment: React.FC = () => {
+  // Get establishment context functions
+  const { updateEstablishmentImage, updateEstablishmentName } = useEstablishment();
+  
   // Estados para os dados do estabelecimento
-  const [establishmentData, setEstablishmentData] = useState(initialEstablishmentData);
-  const [savedData, setSavedData] = useState(initialEstablishmentData);
+  const [establishmentData, setEstablishmentData] = useState(defaultEstablishmentData);
+  const [savedData, setSavedData] = useState(defaultEstablishmentData);
   
   // Estados para controle de edição
   const [isEditingBasic, setIsEditingBasic] = useState(false);
   const [isEditingSocial, setIsEditingSocial] = useState(false);
   const [teamDialogOpen, setTeamDialogOpen] = useState(false);
   
-  const { updateEstablishmentImage } = useEstablishment();
-
-  // Efeito para inicializar a imagem do estabelecimento no contexto
+  // Load saved data from localStorage on component mount
   useEffect(() => {
-    if (savedData.image) {
-      updateEstablishmentImage(savedData.image);
+    const savedEstablishmentData = localStorage.getItem('establishmentData');
+    
+    if (savedEstablishmentData) {
+      const parsedData = JSON.parse(savedEstablishmentData);
+      setEstablishmentData(parsedData);
+      setSavedData(parsedData);
+      
+      // Update context with saved values
+      if (parsedData.image) {
+        updateEstablishmentImage(parsedData.image);
+      }
+      
+      updateEstablishmentName(parsedData.name);
     }
   }, []);
 
@@ -75,29 +86,40 @@ const Establishment: React.FC = () => {
   };
 
   const handleImageChange = (image: string) => {
-    setEstablishmentData((prev) => ({
-      ...prev,
+    const newData = {
+      ...establishmentData,
       image: image,
-    }));
-
-    // Salva a imagem imediatamente
-    setSavedData((prev) => ({
-      ...prev,
-      image: image,
-    }));
+    };
+    
+    setEstablishmentData(newData);
+    setSavedData(newData);
+    
+    // Update the image in the context and localStorage
+    updateEstablishmentImage(image);
+    
+    // Save all data to localStorage
+    localStorage.setItem('establishmentData', JSON.stringify(newData));
     
     toast.success("Imagem atualizada com sucesso!");
   };
 
   // Handlers para salvar ou cancelar edição
   const handleSaveBasicInfo = () => {
-    setSavedData((prev) => ({
-      ...prev,
+    const newData = {
+      ...savedData,
       name: establishmentData.name,
       address: establishmentData.address,
       schedule: establishmentData.schedule,
       phone: establishmentData.phone,
-    }));
+    };
+    
+    setSavedData(newData);
+    
+    // Update establishment name in the context
+    updateEstablishmentName(establishmentData.name);
+    
+    // Save all data to localStorage
+    localStorage.setItem('establishmentData', JSON.stringify(newData));
     
     setIsEditingBasic(false);
     toast.success("Informações básicas atualizadas com sucesso!");
@@ -116,10 +138,15 @@ const Establishment: React.FC = () => {
   };
 
   const handleSaveSocialMedia = () => {
-    setSavedData((prev) => ({
-      ...prev,
+    const newData = {
+      ...savedData,
       social: establishmentData.social,
-    }));
+    };
+    
+    setSavedData(newData);
+    
+    // Save all data to localStorage
+    localStorage.setItem('establishmentData', JSON.stringify(newData));
     
     setIsEditingSocial(false);
     toast.success("Informações de redes sociais atualizadas com sucesso!");

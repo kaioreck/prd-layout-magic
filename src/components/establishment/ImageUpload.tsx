@@ -29,8 +29,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ currentImage, onImageChange }
         const result = reader.result as string;
         setPreviewImage(result);
         onImageChange(result);
-        updateEstablishmentImage(result);
-        toast.success("Imagem e logo atualizados com sucesso!");
       };
       reader.readAsDataURL(file);
     }
