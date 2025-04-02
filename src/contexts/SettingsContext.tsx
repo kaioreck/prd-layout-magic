@@ -65,60 +65,101 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
 
   // Load saved data from localStorage when component mounts
   useEffect(() => {
-    const savedProfile = localStorage.getItem('userProfile');
-    const savedNotifications = localStorage.getItem('notificationPreferences');
-    const savedProfessionals = localStorage.getItem('professionals');
-    
-    if (savedProfile) {
-      setProfile(JSON.parse(savedProfile));
-    }
-    
-    if (savedNotifications) {
-      setNotifications(JSON.parse(savedNotifications));
-    }
-    
-    if (savedProfessionals) {
-      setProfessionals(JSON.parse(savedProfessionals));
+    try {
+      const savedProfile = localStorage.getItem('userProfile');
+      const savedNotifications = localStorage.getItem('notificationPreferences');
+      const savedProfessionals = localStorage.getItem('professionals');
+      
+      if (savedProfile) {
+        setProfile(JSON.parse(savedProfile));
+      }
+      
+      if (savedNotifications) {
+        setNotifications(JSON.parse(savedNotifications));
+      }
+      
+      if (savedProfessionals) {
+        setProfessionals(JSON.parse(savedProfessionals));
+      }
+    } catch (error) {
+      console.error('Error loading settings from localStorage:', error);
+      // If there's an error, we'll use the default values
     }
   }, []);
 
   const updateProfile = (newProfile: UserProfile) => {
-    setProfile(newProfile);
-    localStorage.setItem('userProfile', JSON.stringify(newProfile));
-    toast({
-      title: "Perfil atualizado",
-      description: "Suas informações foram salvas com sucesso."
-    });
+    try {
+      setProfile(newProfile);
+      localStorage.setItem('userProfile', JSON.stringify(newProfile));
+      toast({
+        title: "Perfil atualizado",
+        description: "Suas informações foram salvas com sucesso."
+      });
+    } catch (error) {
+      console.error('Error saving profile to localStorage:', error);
+      toast({
+        title: "Erro ao salvar",
+        description: "Ocorreu um erro ao salvar suas informações.",
+        variant: "destructive"
+      });
+    }
   };
 
   const updateNotifications = (newNotifications: NotificationPreferences) => {
-    setNotifications(newNotifications);
-    localStorage.setItem('notificationPreferences', JSON.stringify(newNotifications));
-    toast({
-      title: "Preferências atualizadas",
-      description: "Suas preferências de notificação foram salvas."
-    });
+    try {
+      setNotifications(newNotifications);
+      localStorage.setItem('notificationPreferences', JSON.stringify(newNotifications));
+      toast({
+        title: "Preferências atualizadas",
+        description: "Suas preferências de notificação foram salvas."
+      });
+    } catch (error) {
+      console.error('Error saving notification preferences to localStorage:', error);
+      toast({
+        title: "Erro ao salvar",
+        description: "Ocorreu um erro ao salvar suas preferências.",
+        variant: "destructive"
+      });
+    }
   };
 
   const addProfessional = (professional: Professional) => {
-    const newProfessionals = [...professionals, professional];
-    setProfessionals(newProfessionals);
-    localStorage.setItem('professionals', JSON.stringify(newProfessionals));
-    toast({
-      title: "Profissional adicionado",
-      description: `${professional.name} foi adicionado com sucesso.`
-    });
+    try {
+      const newProfessionals = [...professionals, professional];
+      setProfessionals(newProfessionals);
+      localStorage.setItem('professionals', JSON.stringify(newProfessionals));
+      toast({
+        title: "Profissional adicionado",
+        description: `${professional.name} foi adicionado com sucesso.`
+      });
+    } catch (error) {
+      console.error('Error adding professional to localStorage:', error);
+      toast({
+        title: "Erro ao adicionar",
+        description: "Ocorreu um erro ao adicionar o profissional.",
+        variant: "destructive"
+      });
+    }
   };
 
   const removeProfessional = (id: string) => {
-    const professional = professionals.find(p => p.id === id);
-    const newProfessionals = professionals.filter(p => p.id !== id);
-    setProfessionals(newProfessionals);
-    localStorage.setItem('professionals', JSON.stringify(newProfessionals));
-    if (professional) {
+    try {
+      const professional = professionals.find(p => p.id === id);
+      const newProfessionals = professionals.filter(p => p.id !== id);
+      setProfessionals(newProfessionals);
+      localStorage.setItem('professionals', JSON.stringify(newProfessionals));
+      if (professional) {
+        toast({
+          title: "Profissional removido",
+          description: `${professional.name} foi removido com sucesso.`
+        });
+      }
+    } catch (error) {
+      console.error('Error removing professional from localStorage:', error);
       toast({
-        title: "Profissional removido",
-        description: `${professional.name} foi removido com sucesso.`
+        title: "Erro ao remover",
+        description: "Ocorreu um erro ao remover o profissional.",
+        variant: "destructive"
       });
     }
   };
