@@ -1,11 +1,9 @@
 
-import React, { useState } from 'react';
-import { Store, MapPin, Clock, Phone, Globe, Instagram, Users } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card } from '@/components/ui/card';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { toast } from "sonner";
+import { useEstablishment } from '@/contexts/EstablishmentContext';
 
 import ImageUpload from '@/components/establishment/ImageUpload';
 import BasicInfoForm from '@/components/establishment/BasicInfoForm';
@@ -38,6 +36,15 @@ const Establishment: React.FC = () => {
   const [isEditingBasic, setIsEditingBasic] = useState(false);
   const [isEditingSocial, setIsEditingSocial] = useState(false);
   const [teamDialogOpen, setTeamDialogOpen] = useState(false);
+  
+  const { updateEstablishmentImage } = useEstablishment();
+
+  // Efeito para inicializar a imagem do estabelecimento no contexto
+  useEffect(() => {
+    if (savedData.image) {
+      updateEstablishmentImage(savedData.image);
+    }
+  }, []);
 
   // Handlers para alterações nos campos
   const handleBasicFieldChange = (field: string, value: string) => {

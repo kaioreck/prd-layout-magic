@@ -1,7 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Upload } from 'lucide-react';
+import { Upload, Image as ImageIcon, Camera } from 'lucide-react';
+import { useEstablishment } from '@/contexts/EstablishmentContext';
+import { toast } from 'sonner';
 
 interface ImageUploadProps {
   currentImage?: string;
@@ -11,6 +13,13 @@ interface ImageUploadProps {
 const ImageUpload: React.FC<ImageUploadProps> = ({ currentImage, onImageChange }) => {
   const [previewImage, setPreviewImage] = useState<string | undefined>(currentImage);
   const [isHovering, setIsHovering] = useState(false);
+  const { updateEstablishmentImage } = useEstablishment();
+
+  useEffect(() => {
+    if (currentImage) {
+      setPreviewImage(currentImage);
+    }
+  }, [currentImage]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -20,6 +29,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ currentImage, onImageChange }
         const result = reader.result as string;
         setPreviewImage(result);
         onImageChange(result);
+        updateEstablishmentImage(result);
+        toast.success("Imagem e logo atualizados com sucesso!");
       };
       reader.readAsDataURL(file);
     }
@@ -40,7 +51,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ currentImage, onImageChange }
           />
         ) : (
           <div className="flex flex-col items-center justify-center p-6 text-gray-500">
-            <Upload className="w-12 h-12 mb-2" />
+            <ImageIcon className="w-12 h-12 mb-2" />
             <p>Adicione uma foto do seu estabelecimento</p>
           </div>
         )}
@@ -52,7 +63,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ currentImage, onImageChange }
         >
           <Button variant="outline" className="bg-white hover:bg-white/90">
             <label className="cursor-pointer flex items-center">
-              <Upload className="w-4 h-4 mr-2" />
+              <Camera className="w-4 h-4 mr-2" />
               <span>{previewImage ? 'Alterar' : 'Adicionar'} Imagem</span>
               <input
                 type="file"
