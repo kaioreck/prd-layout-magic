@@ -1,12 +1,68 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Bell, Shield, CreditCard, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { useSettings } from '@/contexts/SettingsContext';
+import ProfessionalsList from '@/components/settings/ProfessionalsList';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
 
 const Settings: React.FC = () => {
+  const { profile, updateProfile, notifications, updateNotifications } = useSettings();
+  
+  // Profile form state
+  const [formProfile, setFormProfile] = useState({
+    name: profile.name,
+    email: profile.email,
+    phone: profile.phone,
+    role: profile.role
+  });
+
+  // Update form when profile changes
+  useEffect(() => {
+    setFormProfile({
+      name: profile.name,
+      email: profile.email,
+      phone: profile.phone,
+      role: profile.role
+    });
+  }, [profile]);
+
+  // Handle profile form input changes
+  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormProfile(prev => ({ ...prev, [id]: value }));
+  };
+
+  // Handle profile form submission
+  const handleProfileSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateProfile(formProfile);
+  };
+
+  // Handle notification toggle changes
+  const handleNotificationChange = (key: keyof typeof notifications, checked: boolean) => {
+    updateNotifications({ ...notifications, [key]: checked });
+  };
+
+  // Password form state
+  const passwordForm = useForm({
+    defaultValues: {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    }
+  });
+
+  const onPasswordSubmit = (data: any) => {
+    console.log('Password change submitted:', data);
+    passwordForm.reset();
+  };
+
   return (
     <div className="p-6">
       <div className="mb-6">
@@ -42,55 +98,57 @@ const Settings: React.FC = () => {
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <h2 className="text-xl font-semibold mb-4">Informações do Perfil</h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div>
-                  <Label htmlFor="name">Nome</Label>
-                  <input 
-                    id="name"
-                    type="text" 
-                    placeholder="Seu nome" 
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-trinks-blue"
-                    defaultValue="Administrador"
-                  />
+              <form onSubmit={handleProfileSubmit}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div>
+                    <Label htmlFor="name">Nome</Label>
+                    <Input 
+                      id="name"
+                      value={formProfile.name} 
+                      onChange={handleProfileChange}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input 
+                      id="email"
+                      type="email" 
+                      value={formProfile.email} 
+                      onChange={handleProfileChange}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="phone">Telefone</Label>
+                    <Input 
+                      id="phone"
+                      value={formProfile.phone} 
+                      onChange={handleProfileChange}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="role">Cargo</Label>
+                    <Input 
+                      id="role"
+                      value={formProfile.role} 
+                      onChange={handleProfileChange}
+                    />
+                  </div>
                 </div>
                 
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <input 
-                    id="email"
-                    type="email" 
-                    placeholder="Seu email" 
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-trinks-blue"
-                    defaultValue="admin@teste12341234.com"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="phone">Telefone</Label>
-                  <input 
-                    id="phone"
-                    type="text" 
-                    placeholder="Seu telefone" 
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-trinks-blue"
-                    defaultValue="(11) 99999-9999"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="role">Cargo</Label>
-                  <input 
-                    id="role"
-                    type="text" 
-                    placeholder="Seu cargo" 
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-trinks-blue"
-                    defaultValue="Proprietário"
-                  />
-                </div>
+                <Button 
+                  type="submit" 
+                  className="bg-trinks-orange hover:bg-trinks-orange/90"
+                >
+                  Salvar Alterações
+                </Button>
+              </form>
+
+              <div className="mt-8">
+                <ProfessionalsList />
               </div>
-              
-              <Button className="bg-trinks-orange hover:bg-trinks-orange/90">
-                Salvar Alterações
-              </Button>
             </div>
           </TabsContent>
           
@@ -104,7 +162,11 @@ const Settings: React.FC = () => {
                     <h3 className="font-medium">Notificações por Email</h3>
                     <p className="text-sm text-gray-500">Receba atualizações por email</p>
                   </div>
-                  <Switch id="email-notifications" defaultChecked />
+                  <Switch 
+                    id="email-notifications" 
+                    checked={notifications.email} 
+                    onCheckedChange={(checked) => handleNotificationChange('email', checked)}
+                  />
                 </div>
                 
                 <div className="flex items-center justify-between">
@@ -112,30 +174,12 @@ const Settings: React.FC = () => {
                     <h3 className="font-medium">Notificações por SMS</h3>
                     <p className="text-sm text-gray-500">Receba atualizações por SMS</p>
                   </div>
-                  <Switch id="sms-notifications" />
+                  <Switch 
+                    id="sms-notifications" 
+                    checked={notifications.sms} 
+                    onCheckedChange={(checked) => handleNotificationChange('sms', checked)}
+                  />
                 </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium">Notificações do Sistema</h3>
-                    <p className="text-sm text-gray-500">Receba notificações dentro do sistema</p>
-                  </div>
-                  <Switch id="system-notifications" defaultChecked />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium">Lembretes de Agendamento</h3>
-                    <p className="text-sm text-gray-500">Receba lembretes de novos agendamentos</p>
-                  </div>
-                  <Switch id="appointment-reminders" defaultChecked />
-                </div>
-              </div>
-              
-              <div className="mt-6">
-                <Button className="bg-trinks-orange hover:bg-trinks-orange/90">
-                  Salvar Preferências
-                </Button>
               </div>
             </div>
           </TabsContent>
@@ -146,36 +190,50 @@ const Settings: React.FC = () => {
               
               <div className="mb-6">
                 <h3 className="font-medium mb-2">Alterar Senha</h3>
-                <div className="space-y-3">
-                  <div>
-                    <Label htmlFor="current-password">Senha Atual</Label>
-                    <input 
-                      id="current-password"
-                      type="password" 
-                      className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-trinks-blue"
+                <Form {...passwordForm}>
+                  <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)} className="space-y-3">
+                    <FormField
+                      control={passwordForm.control}
+                      name="currentPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Senha Atual</FormLabel>
+                          <FormControl>
+                            <Input type="password" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="new-password">Nova Senha</Label>
-                    <input 
-                      id="new-password"
-                      type="password" 
-                      className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-trinks-blue"
+                    
+                    <FormField
+                      control={passwordForm.control}
+                      name="newPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nova Senha</FormLabel>
+                          <FormControl>
+                            <Input type="password" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="confirm-password">Confirmar Nova Senha</Label>
-                    <input 
-                      id="confirm-password"
-                      type="password" 
-                      className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-trinks-blue"
+                    
+                    <FormField
+                      control={passwordForm.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Confirmar Nova Senha</FormLabel>
+                          <FormControl>
+                            <Input type="password" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  
-                  <Button>Alterar Senha</Button>
-                </div>
+                    
+                    <Button type="submit">Alterar Senha</Button>
+                  </form>
+                </Form>
               </div>
               
               <div className="mb-6">
@@ -241,7 +299,7 @@ const Settings: React.FC = () => {
                 <div className="space-y-3">
                   <div className="border rounded-md p-3">
                     <h4 className="font-medium">Como adicionar um novo profissional?</h4>
-                    <p className="text-sm text-gray-500">Acesse a seção "Meu Estabelecimento" e clique em "Ver Equipe".</p>
+                    <p className="text-sm text-gray-500">Acesse a seção "Perfil" nas Configurações e clique em "Adicionar Profissional".</p>
                   </div>
                   
                   <div className="border rounded-md p-3">

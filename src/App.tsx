@@ -22,6 +22,7 @@ import Rankings from "./pages/Rankings";
 import SatisfactionSurvey from "./pages/SatisfactionSurvey";
 import HeatMap from "./pages/HeatMap";
 import { EstablishmentProvider } from "./contexts/EstablishmentContext";
+import { SettingsProvider } from "./contexts/SettingsContext";
 
 // Cria um cliente do React Query
 const queryClient = new QueryClient();
@@ -33,29 +34,31 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <EstablishmentProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<MainLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="agenda" element={<Schedule />} />
-              <Route path="estabelecimento" element={<Establishment />} />
-              <Route path="financeiro" element={<FinancialControl />} />
-              <Route path="relatorios/principais" element={<MainReports />} />
-              <Route path="relatorios/dashboard" element={<DashboardReports />} />
-              <Route path="relatorios/demonstrativo" element={<ResultsReport />} />
-              <Route path="relatorios/rankings" element={<Rankings />} />
-              <Route path="relatorios/rankings/produtos" element={<ProductRanking />} />
-              <Route path="relatorios/pesquisa" element={<SatisfactionSurvey />} />
-              <Route path="relatorios/mapa-calor" element={<HeatMap />} />
-              <Route path="relatorios/retorno" element={<ReturnReports />} />
-              <Route path="plano" element={<MyPlan />} />
-              <Route path="configuracoes" element={<Settings />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <SettingsProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<MainLayout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="agenda" element={<Schedule />} />
+                <Route path="estabelecimento" element={<Establishment />} />
+                <Route path="financeiro" element={<FinancialControl />} />
+                <Route path="relatorios/principais" element={<MainReports />} />
+                <Route path="relatorios/dashboard" element={<DashboardReports />} />
+                <Route path="relatorios/demonstrativo" element={<ResultsReport />} />
+                <Route path="relatorios/rankings" element={<Rankings />} />
+                <Route path="relatorios/rankings/produtos" element={<ProductRanking />} />
+                <Route path="relatorios/pesquisa" element={<SatisfactionSurvey />} />
+                <Route path="relatorios/mapa-calor" element={<HeatMap />} />
+                <Route path="relatorios/retorno" element={<ReturnReports />} />
+                <Route path="plano" element={<MyPlan />} />
+                <Route path="configuracoes" element={<Settings />} />
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </SettingsProvider>
       </EstablishmentProvider>
     </TooltipProvider>
   </QueryClientProvider>
