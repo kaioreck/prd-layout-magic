@@ -550,12 +550,13 @@ const Schedule: React.FC = () => {
                     <div className="p-2 space-y-2">
                       {getAppointmentsForDay(day).map((app, appIndex) => {
                         const serviceName = servicos.find(s => s.id_servico === app.id_servico)?.descricao || '';
+                        const appointmentTime = format(app.data_hora, 'HH:mm');
                         return (
                           <div 
                             key={appIndex}
                             className="bg-trinks-blue/10 border-l-4 border-trinks-blue p-2 rounded-r-md text-xs"
                           >
-                            <p className="font-medium">{app.time} - {serviceName}</p>
+                            <p className="font-medium">{appointmentTime} - {serviceName}</p>
                             <p>{app.cliente?.nome}</p>
                           </div>
                         );
@@ -775,35 +776,3 @@ const Schedule: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
-      <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Confirmação de sobreposição</DialogTitle>
-            <DialogDescription>
-              O horário selecionado já está ocupado. Deseja sobrescrever este agendamento?
-            </DialogDescription>
-          </DialogHeader>
-          
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => setIsConfirmDialogOpen(false)}
-              className="mr-2"
-            >
-              Cancelar
-            </Button>
-            <Button 
-              variant="destructive" 
-              onClick={processAppointment}
-            >
-              Sobrescrever agendamento
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-};
-
-export default Schedule;
