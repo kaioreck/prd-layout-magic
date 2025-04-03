@@ -376,15 +376,18 @@ const Schedule: React.FC = () => {
           {format(date, 'd')}
         </div>
         <div className="overflow-y-auto max-h-20">
-          {appointments.map((app, idx) => (
-            <div 
-              key={idx} 
-              className="text-xs p-1 mb-1 bg-trinks-blue/10 border-l-2 border-trinks-blue rounded truncate"
-              title={`${appTime} - ${servicos.find(s => s.id_servico === app.id_servico)?.descricao} - ${app.cliente?.nome}`}
-            >
-              {appTime} - {app.cliente?.nome.split(' ')[0]}
-            </div>
-          ))}
+          {appointments.map((app, idx) => {
+            const appointmentTime = format(app.data_hora, 'HH:mm');
+            return (
+              <div 
+                key={idx} 
+                className="text-xs p-1 mb-1 bg-trinks-blue/10 border-l-2 border-trinks-blue rounded truncate"
+                title={`${appointmentTime} - ${servicos.find(s => s.id_servico === app.id_servico)?.descricao} - ${app.cliente?.nome}`}
+              >
+                {appointmentTime} - {app.cliente?.nome.split(' ')[0]}
+              </div>
+            );
+          })}
           {appointments.length === 0 && isCurrentMonth && (
             <Button 
               variant="ghost" 
