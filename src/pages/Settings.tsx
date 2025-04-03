@@ -13,25 +13,27 @@ import { useForm } from 'react-hook-form';
 import { toast } from "@/hooks/use-toast";
 
 const Settings: React.FC = () => {
-  const { profile, updateProfile, notifications, updateNotifications } = useSettings();
+  const { barbearia, updateBarbearia, notifications, updateNotifications } = useSettings();
   
   // Profile form state
   const [formProfile, setFormProfile] = useState({
-    name: profile.name,
-    email: profile.email,
-    phone: profile.phone,
-    role: profile.role
+    nome: barbearia.nome,
+    email: barbearia.email || '',
+    telefone: barbearia.telefone || '',
+    endereco: barbearia.endereco || '',
+    horario_funcionamento: barbearia.horario_funcionamento || ''
   });
 
   // Update form when profile changes
   useEffect(() => {
     setFormProfile({
-      name: profile.name,
-      email: profile.email,
-      phone: profile.phone,
-      role: profile.role
+      nome: barbearia.nome,
+      email: barbearia.email || '',
+      telefone: barbearia.telefone || '',
+      endereco: barbearia.endereco || '',
+      horario_funcionamento: barbearia.horario_funcionamento || ''
     });
-  }, [profile]);
+  }, [barbearia]);
 
   // Handle profile form input changes
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +44,14 @@ const Settings: React.FC = () => {
   // Handle profile form submission
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateProfile(formProfile);
+    updateBarbearia({
+      ...barbearia,
+      nome: formProfile.nome,
+      email: formProfile.email,
+      telefone: formProfile.telefone,
+      endereco: formProfile.endereco,
+      horario_funcionamento: formProfile.horario_funcionamento
+    });
   };
 
   // Handle notification toggle changes
@@ -107,15 +116,15 @@ const Settings: React.FC = () => {
           
           <TabsContent value="profile">
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold mb-4">Informações do Perfil</h2>
+              <h2 className="text-xl font-semibold mb-4">Informações do Estabelecimento</h2>
               
               <form onSubmit={handleProfileSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                   <div>
-                    <Label htmlFor="name">Nome</Label>
+                    <Label htmlFor="nome">Nome</Label>
                     <Input 
-                      id="name"
-                      value={formProfile.name} 
+                      id="nome"
+                      value={formProfile.nome} 
                       onChange={handleProfileChange}
                     />
                   </div>
@@ -131,20 +140,30 @@ const Settings: React.FC = () => {
                   </div>
                   
                   <div>
-                    <Label htmlFor="phone">Telefone</Label>
+                    <Label htmlFor="telefone">Telefone</Label>
                     <Input 
-                      id="phone"
-                      value={formProfile.phone} 
+                      id="telefone"
+                      value={formProfile.telefone} 
                       onChange={handleProfileChange}
                     />
                   </div>
                   
                   <div>
-                    <Label htmlFor="role">Cargo</Label>
+                    <Label htmlFor="endereco">Endereço</Label>
                     <Input 
-                      id="role"
-                      value={formProfile.role} 
+                      id="endereco"
+                      value={formProfile.endereco} 
                       onChange={handleProfileChange}
+                    />
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <Label htmlFor="horario_funcionamento">Horário de Funcionamento</Label>
+                    <Input 
+                      id="horario_funcionamento"
+                      value={formProfile.horario_funcionamento} 
+                      onChange={handleProfileChange}
+                      placeholder="Ex: Seg-Sex: 9h-19h, Sáb: 9h-17h"
                     />
                   </div>
                 </div>

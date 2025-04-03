@@ -14,25 +14,25 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from "@/hooks/use-toast";
-import { Professional } from '@/contexts/SettingsContext';
+import { Profissional } from '@/contexts/SettingsContext';
 
 const ProfessionalsList: React.FC = () => {
-  const { professionals, addProfessional, removeProfessional } = useSettings();
+  const { profissionais, addProfissional, removeProfissional } = useSettings();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newProfessional, setNewProfessional] = useState<Omit<Professional, 'id'>>({
-    name: '',
-    role: '',
-    phone: '',
+  const [newProfissional, setNewProfissional] = useState<Omit<Profissional, 'id_profissional' | 'ativo'>>({
+    nome: '',
+    especialidade: '',
+    telefone: '',
     email: ''
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewProfessional(prev => ({ ...prev, [name]: value }));
+    setNewProfissional(prev => ({ ...prev, [name]: value }));
   };
 
   const handleAddProfessional = () => {
-    if (!newProfessional.name || !newProfessional.email) {
+    if (!newProfissional.nome || !newProfissional.email) {
       toast({
         title: "Campos obrigatórios",
         description: "Nome e email são obrigatórios.",
@@ -41,15 +41,15 @@ const ProfessionalsList: React.FC = () => {
       return;
     }
 
-    addProfessional({
-      ...newProfessional,
-      id: Date.now().toString()
+    addProfissional({
+      ...newProfissional,
+      ativo: true
     });
 
-    setNewProfessional({
-      name: '',
-      role: '',
-      phone: '',
+    setNewProfissional({
+      nome: '',
+      especialidade: '',
+      telefone: '',
       email: ''
     });
 
@@ -57,7 +57,7 @@ const ProfessionalsList: React.FC = () => {
   };
 
   const handleRemoveProfessional = (id: string) => {
-    removeProfessional(id);
+    removeProfissional(id);
   };
 
   return (
@@ -80,38 +80,38 @@ const ProfessionalsList: React.FC = () => {
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
+                <Label htmlFor="nome" className="text-right">
                   Nome *
                 </Label>
                 <Input
-                  id="name"
-                  name="name"
-                  value={newProfessional.name}
+                  id="nome"
+                  name="nome"
+                  value={newProfissional.nome}
                   onChange={handleInputChange}
                   className="col-span-3"
                   required
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="role" className="text-right">
-                  Cargo
+                <Label htmlFor="especialidade" className="text-right">
+                  Especialidade
                 </Label>
                 <Input
-                  id="role"
-                  name="role"
-                  value={newProfessional.role}
+                  id="especialidade"
+                  name="especialidade"
+                  value={newProfissional.especialidade}
                   onChange={handleInputChange}
                   className="col-span-3"
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="phone" className="text-right">
+                <Label htmlFor="telefone" className="text-right">
                   Telefone
                 </Label>
                 <Input
-                  id="phone"
-                  name="phone"
-                  value={newProfessional.phone}
+                  id="telefone"
+                  name="telefone"
+                  value={newProfissional.telefone}
                   onChange={handleInputChange}
                   className="col-span-3"
                 />
@@ -124,7 +124,7 @@ const ProfessionalsList: React.FC = () => {
                   id="email"
                   name="email"
                   type="email"
-                  value={newProfessional.email}
+                  value={newProfissional.email}
                   onChange={handleInputChange}
                   className="col-span-3"
                   required
@@ -143,33 +143,33 @@ const ProfessionalsList: React.FC = () => {
         </Dialog>
       </div>
       
-      {professionals.length === 0 ? (
+      {profissionais.length === 0 ? (
         <div className="text-center py-8 border rounded-md bg-gray-50">
           <p className="text-gray-500">Nenhum profissional cadastrado</p>
           <p className="text-sm text-gray-400 mt-1">Adicione profissionais à sua equipe</p>
         </div>
       ) : (
         <div className="grid gap-4">
-          {professionals.map((professional) => (
-            <div key={professional.id} className="border rounded-md p-4 bg-white flex justify-between items-center">
+          {profissionais.map((profissional) => (
+            <div key={profissional.id_profissional} className="border rounded-md p-4 bg-white flex justify-between items-center">
               <div>
-                <h4 className="font-medium">{professional.name}</h4>
-                <p className="text-sm text-gray-500">{professional.role}</p>
+                <h4 className="font-medium">{profissional.nome}</h4>
+                <p className="text-sm text-gray-500">{profissional.especialidade}</p>
                 <div className="flex items-center gap-4 mt-1">
                   <div className="flex items-center text-sm text-gray-500">
                     <Phone className="w-3 h-3 mr-1" />
-                    {professional.phone}
+                    {profissional.telefone}
                   </div>
                   <div className="flex items-center text-sm text-gray-500">
                     <Mail className="w-3 h-3 mr-1" />
-                    {professional.email}
+                    {profissional.email}
                   </div>
                 </div>
               </div>
               <Button 
                 variant="destructive" 
                 size="sm" 
-                onClick={() => handleRemoveProfessional(professional.id)}
+                onClick={() => handleRemoveProfessional(profissional.id_profissional || '')}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>

@@ -312,6 +312,7 @@ const Schedule: React.FC = () => {
               {appointments.map((appointment, index) => {
                 const serviceName = servicos.find(s => s.id_servico === appointment.id_servico)?.descricao || 'Serviço';
                 const professional = profissionais.find(p => p.id_profissional === appointment.id_profissional);
+                const appointmentTime = format(appointment.data_hora, 'HH:mm');
                 
                 return (
                   <div key={index} className="bg-trinks-blue/10 border-l-4 border-trinks-blue p-3 rounded-r-md">
@@ -379,9 +380,9 @@ const Schedule: React.FC = () => {
             <div 
               key={idx} 
               className="text-xs p-1 mb-1 bg-trinks-blue/10 border-l-2 border-trinks-blue rounded truncate"
-              title={`${app.time} - ${servicos.find(s => s.id_servico === app.id_servico)?.descricao} - ${app.cliente?.nome}`}
+              title={`${appTime} - ${servicos.find(s => s.id_servico === app.id_servico)?.descricao} - ${app.cliente?.nome}`}
             >
-              {app.time} - {app.cliente?.nome.split(' ')[0]}
+              {appTime} - {app.cliente?.nome.split(' ')[0]}
             </div>
           ))}
           {appointments.length === 0 && isCurrentMonth && (
