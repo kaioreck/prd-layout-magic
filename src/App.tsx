@@ -24,10 +24,10 @@ import HeatMap from "./pages/HeatMap";
 import { EstablishmentProvider } from "./contexts/EstablishmentContext";
 import { SettingsProvider } from "./contexts/SettingsContext";
 
-// Cria um cliente do React Query
+// Create a React Query client
 const queryClient = new QueryClient();
 
-// Define o título do documento
+// Set document title
 document.title = "Barber.IA";
 
 const App = () => (

@@ -20,86 +20,118 @@ import { useToast } from "@/hooks/use-toast";
 import { format, addDays, subDays, isSameDay, startOfWeek, endOfWeek, eachDayOfInterval, startOfMonth, endOfMonth, getDay, isWithinInterval } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useSettings } from '@/contexts/SettingsContext';
 
-// Tipos de serviço
-const serviceTypes = [
-  { id: 1, name: 'Corte de cabelo', duration: 30, price: 35 },
-  { id: 2, name: 'Barba', duration: 20, price: 25 },
-  { id: 3, name: 'Corte e barba', duration: 50, price: 55 },
-  { id: 4, name: 'Hidratação', duration: 40, price: 45 },
-  { id: 5, name: 'Coloração', duration: 60, price: 70 },
-];
+interface Cliente {
+  id_cliente?: number;
+  nome: string;
+  telefone: string;
+  email?: string;
+}
 
-// Horários disponíveis
+interface Agendamento {
+  id_agendamento?: number;
+  id_cliente?: number;
+  cliente?: Cliente;
+  id_servico: number;
+  id_profissional: string;
+  data_hora: Date;
+  status: 'Confirmado' | 'Cancelado' | 'Concluído' | 'Não Compareceu';
+  origem: 'WhatsApp' | 'Balcão' | 'App' | 'Telefone';
+}
+
 const availableTimes = [
   '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
   '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30',
   '16:00', '16:30', '17:00', '17:30', '18:00'
 ];
 
-// Dados iniciais (simulação de banco de dados)
-const initialAppointments = [
-  { id: 1, clientName: 'João Silva', clientPhone: '(11) 98765-4321', service: 1, date: new Date(), time: '10:00', duration: 30 },
-  { id: 2, clientName: 'Maria Oliveira', clientPhone: '(11) 97654-3210', service: 3, date: new Date(), time: '14:30', duration: 50 },
-  { id: 3, clientName: 'Carlos Santos', clientPhone: '(11) 96543-2109', service: 2, date: addDays(new Date(), 1), time: '09:00', duration: 20 },
+const initialAppointments: Agendamento[] = [
+  { 
+    id_agendamento: 1, 
+    cliente: { nome: 'João Silva', telefone: '(11) 98765-4321' },
+    id_servico: 1, 
+    id_profissional: 'prof_1', 
+    data_hora: new Date(), 
+    status: 'Confirmado', 
+    origem: 'WhatsApp'
+  },
+  { 
+    id_agendamento: 2, 
+    cliente: { nome: 'Maria Oliveira', telefone: '(11) 97654-3210' },
+    id_servico: 3, 
+    id_profissional: 'prof_1', 
+    data_hora: new Date(), 
+    status: 'Confirmado', 
+    origem: 'App'
+  },
+  { 
+    id_agendamento: 3, 
+    cliente: { nome: 'Carlos Santos', telefone: '(11) 96543-2109' },
+    id_servico: 2, 
+    id_profissional: 'prof_2', 
+    data_hora: addDays(new Date(), 1), 
+    status: 'Confirmado', 
+    origem: 'Balcão'
+  },
 ];
 
-// Interface para os agendamentos
-interface Appointment {
-  id: number;
-  clientName: string;
-  clientPhone: string;
-  service: number;
-  date: Date;
-  time: string;
-  duration: number;
-}
-
-// Interface para o formulário de agendamento
 interface AppointmentFormData {
   clientName: string;
   clientPhone: string;
-  service: number;
+  serviceId: number;
+  professionalId: string;
   date: Date;
   time: string;
+  origin: 'WhatsApp' | 'Balcão' | 'App' | 'Telefone';
 }
 
 const Schedule: React.FC = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const { servicos, profissionais } = useSettings();
   
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentView, setCurrentView] = useState<'day' | 'week' | 'month'>('day');
-  const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
+  const [appointments, setAppointments] = useState<Agendamento[]>(initialAppointments);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [newAppointment, setNewAppointment] = useState<AppointmentFormData>({
     clientName: '',
     clientPhone: '',
-    service: 1,
+    serviceId: servicos[0]?.id_servico || 1,
+    professionalId: profissionais[0]?.id_profissional || '',
     date: new Date(),
-    time: '09:00'
+    time: '09:00',
+    origin: 'App'
   });
   const [calendarOpen, setCalendarOpen] = useState(false);
 
-  // Function to open the appointment dialog with default values
+  useEffect(() => {
+    setNewAppointment(prev => ({
+      ...prev,
+      serviceId: servicos[0]?.id_servico || prev.serviceId,
+      professionalId: profissionais[0]?.id_profissional || prev.professionalId
+    }));
+  }, [servicos, profissionais]);
+
   const scheduleNow = () => {
     setNewAppointment({
       clientName: '',
       clientPhone: '',
-      service: 1,
+      serviceId: servicos[0]?.id_servico || 1,
+      professionalId: profissionais[0]?.id_profissional || '',
       date: new Date(),
-      time: '09:00'
+      time: '09:00',
+      origin: 'App'
     });
     setIsAddDialogOpen(true);
   };
 
-  // Formatar data
   const formatDate = (date: Date): string => {
     return format(date, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR });
   };
 
-  // Navegar entre datas
   const navigateDate = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentDate);
     
@@ -126,21 +158,23 @@ const Schedule: React.FC = () => {
     setCurrentDate(newDate);
   };
 
-  // Verificar se um horário está disponível
-  const isTimeAvailable = (time: string, date: Date): boolean => {
+  const isTimeAvailable = (time: string, date: Date, professionalId: string): boolean => {
+    const [hours, minutes] = time.split(':').map(Number);
+    const dateTime = new Date(date);
+    dateTime.setHours(hours, minutes, 0, 0);
+    
     return !appointments.some(app => 
-      isSameDay(app.date, date) && app.time === time
+      isSameDay(app.data_hora, date) && 
+      format(app.data_hora, 'HH:mm') === time && 
+      app.id_profissional === professionalId
     );
   };
 
-  // Pegar agendamentos do dia atual
   const getTodayAppointments = () => {
-    return appointments.filter(app => isSameDay(app.date, currentDate));
+    return appointments.filter(app => isSameDay(app.data_hora, currentDate));
   };
 
-  // Adicionar novo agendamento
   const addAppointment = () => {
-    // Validação básica
     if (!newAppointment.clientName || !newAppointment.clientPhone || !newAppointment.time) {
       toast({
         title: "Erro ao agendar",
@@ -150,28 +184,32 @@ const Schedule: React.FC = () => {
       return;
     }
 
-    // Verificar se o horário está disponível
-    if (!isTimeAvailable(newAppointment.time, newAppointment.date)) {
+    if (!isTimeAvailable(newAppointment.time, newAppointment.date, newAppointment.professionalId)) {
       setIsConfirmDialogOpen(true);
       return;
     }
 
-    // Processar o agendamento
     processAppointment();
   };
 
-  // Processar o agendamento após confirmação
   const processAppointment = () => {
-    const selectedService = serviceTypes.find(s => s.id === newAppointment.service);
+    const selectedService = servicos.find(s => s.id_servico === newAppointment.serviceId);
     
-    const newAppointmentComplete: Appointment = {
-      id: Date.now(), // ID único baseado no timestamp
-      clientName: newAppointment.clientName,
-      clientPhone: newAppointment.clientPhone,
-      service: newAppointment.service,
-      date: newAppointment.date,
-      time: newAppointment.time,
-      duration: selectedService ? selectedService.duration : 30
+    const [hours, minutes] = newAppointment.time.split(':').map(Number);
+    const appointmentDate = new Date(newAppointment.date);
+    appointmentDate.setHours(hours, minutes, 0, 0);
+    
+    const newAppointmentComplete: Agendamento = {
+      id_agendamento: Date.now(),
+      cliente: {
+        nome: newAppointment.clientName,
+        telefone: newAppointment.clientPhone
+      },
+      id_servico: newAppointment.serviceId,
+      id_profissional: newAppointment.professionalId,
+      data_hora: appointmentDate,
+      status: 'Confirmado',
+      origem: newAppointment.origin
     };
 
     setAppointments([...appointments, newAppointmentComplete]);
@@ -183,29 +221,27 @@ const Schedule: React.FC = () => {
       description: `${newAppointment.clientName} está agendado para ${format(newAppointment.date, 'dd/MM/yyyy')} às ${newAppointment.time}.`,
     });
 
-    // Resetar o formulário
     setNewAppointment({
       clientName: '',
       clientPhone: '',
-      service: 1,
+      serviceId: servicos[0]?.id_servico || 1,
+      professionalId: profissionais[0]?.id_profissional || '',
       date: new Date(),
-      time: '09:00'
+      time: '09:00',
+      origin: 'App'
     });
   };
 
-  // Função para calcular os dias da semana atual
   const getCurrentWeekDays = () => {
     const start = startOfWeek(currentDate, { weekStartsOn: 0 });
     const end = endOfWeek(currentDate, { weekStartsOn: 0 });
     return eachDayOfInterval({ start, end });
   };
 
-  // Função para obter os agendamentos de um dia específico
   const getAppointmentsForDay = (date: Date) => {
-    return appointments.filter(app => isSameDay(app.date, date));
+    return appointments.filter(app => isSameDay(app.data_hora, date));
   };
 
-  // Função para formatar cabeçalho da semana
   const formatWeekHeader = () => {
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 });
     const weekEnd = endOfWeek(currentDate, { weekStartsOn: 0 });
@@ -219,39 +255,38 @@ const Schedule: React.FC = () => {
     }
   };
 
-  // Função para formatar cabeçalho do mês
   const formatMonthHeader = () => {
     return format(currentDate, "MMMM 'de' yyyy", { locale: ptBR });
   };
 
-  // Função para popular timeSlots do dia
   const populateTimeSlots = () => {
     const todayAppointments = getTodayAppointments();
     
     return availableTimes.map(time => {
-      const appointment = todayAppointments.find(app => app.time === time);
-      return { time, appointment };
+      const appsAtThisTime = todayAppointments.filter(app => 
+        format(app.data_hora, 'HH:mm') === time
+      );
+      
+      return { 
+        time, 
+        appointments: appsAtThisTime
+      };
     });
   };
 
-  // Função para obter dias do mês atual para o calendário
   const getMonthDays = () => {
     const start = startOfMonth(currentDate);
     const end = endOfMonth(currentDate);
     
-    // Obter o primeiro dia da semana do mês (0 = domingo, 1 = segunda, etc.)
     const firstDayOfMonth = getDay(start);
     
-    // Adicionar dias do mês anterior para completar a primeira semana
     const daysFromPrevMonth = Array.from({ length: firstDayOfMonth }, (_, i) => {
       return subDays(start, firstDayOfMonth - i);
     });
     
-    // Adicionar dias do mês atual
     const daysInMonth = eachDayOfInterval({ start, end });
     
-    // Calcular quantos dias do próximo mês precisamos para completar a grade
-    const totalDaysToShow = 42; // 6 semanas x 7 dias
+    const totalDaysToShow = 42;
     const daysFromNextMonth = Array.from(
       { length: totalDaysToShow - daysFromPrevMonth.length - daysInMonth.length },
       (_, i) => addDays(end, i + 1)
@@ -260,40 +295,43 @@ const Schedule: React.FC = () => {
     return [...daysFromPrevMonth, ...daysInMonth, ...daysFromNextMonth];
   };
 
-  // Componente de slot de horário
   interface TimeSlotProps {
     time: string;
-    appointment?: Appointment;
+    appointments: Agendamento[];
   }
 
-  const TimeSlot: React.FC<TimeSlotProps> = ({ time, appointment }) => {
-    const serviceName = appointment 
-      ? serviceTypes.find(s => s.id === appointment.service)?.name
-      : null;
-      
-    const hourMinute = time.split(':');
-    const hour = parseInt(hourMinute[0], 10);
-    const minute = parseInt(hourMinute[1], 10);
-    
+  const TimeSlot: React.FC<TimeSlotProps> = ({ time, appointments }) => {
     return (
       <div className="flex p-4 border-b border-gray-100">
         <div className="w-20 text-gray-500 font-medium flex items-center">
           {time}
         </div>
         <div className="flex-1 min-h-16 pl-2">
-          {appointment ? (
-            <div className="bg-trinks-blue/10 border-l-4 border-trinks-blue p-3 rounded-r-md">
-              <p className="font-medium">{serviceName}</p>
-              <p className="text-sm text-gray-500">Cliente: {appointment.clientName}</p>
-              <p className="text-sm text-gray-500">Telefone: {appointment.clientPhone}</p>
-              <div className="flex mt-2">
-                <Button size="sm" variant="outline" className="mr-2">
-                  <Check className="w-4 h-4 mr-1" /> Confirmar
-                </Button>
-                <Button size="sm" variant="outline" className="text-red-500 border-red-500 hover:bg-red-50">
-                  <X className="w-4 h-4 mr-1" /> Cancelar
-                </Button>
-              </div>
+          {appointments.length > 0 ? (
+            <div className="space-y-2">
+              {appointments.map((appointment, index) => {
+                const serviceName = servicos.find(s => s.id_servico === appointment.id_servico)?.descricao || 'Serviço';
+                const professional = profissionais.find(p => p.id_profissional === appointment.id_profissional);
+                
+                return (
+                  <div key={index} className="bg-trinks-blue/10 border-l-4 border-trinks-blue p-3 rounded-r-md">
+                    <p className="font-medium">{serviceName}</p>
+                    <p className="text-sm text-gray-500">Cliente: {appointment.cliente?.nome || 'Cliente'}</p>
+                    <p className="text-sm text-gray-500">Telefone: {appointment.cliente?.telefone || 'N/A'}</p>
+                    {professional && (
+                      <p className="text-sm text-gray-500">Profissional: {professional.nome}</p>
+                    )}
+                    <div className="flex mt-2">
+                      <Button size="sm" variant="outline" className="mr-2">
+                        <Check className="w-4 h-4 mr-1" /> Confirmar
+                      </Button>
+                      <Button size="sm" variant="outline" className="text-red-500 border-red-500 hover:bg-red-50">
+                        <X className="w-4 h-4 mr-1" /> Cancelar
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <Button 
@@ -316,11 +354,10 @@ const Schedule: React.FC = () => {
     );
   };
 
-  // Componente para célula de dia no calendário mensal
   interface DayCellProps {
     date: Date;
     isCurrentMonth: boolean;
-    appointments: Appointment[];
+    appointments: Agendamento[];
     onClick: () => void;
   }
 
@@ -342,9 +379,9 @@ const Schedule: React.FC = () => {
             <div 
               key={idx} 
               className="text-xs p-1 mb-1 bg-trinks-blue/10 border-l-2 border-trinks-blue rounded truncate"
-              title={`${app.time} - ${serviceTypes.find(s => s.id === app.service)?.name} - ${app.clientName}`}
+              title={`${app.time} - ${servicos.find(s => s.id_servico === app.id_servico)?.descricao} - ${app.cliente?.nome}`}
             >
-              {app.time} - {app.clientName.split(' ')[0]}
+              {app.time} - {app.cliente?.nome.split(' ')[0]}
             </div>
           ))}
           {appointments.length === 0 && isCurrentMonth && (
@@ -472,7 +509,7 @@ const Schedule: React.FC = () => {
               <TimeSlot 
                 key={index} 
                 time={slot.time} 
-                appointment={slot.appointment} 
+                appointments={slot.appointments} 
               />
             ))}
           </div>
@@ -508,14 +545,14 @@ const Schedule: React.FC = () => {
                   {getAppointmentsForDay(day).length > 0 ? (
                     <div className="p-2 space-y-2">
                       {getAppointmentsForDay(day).map((app, appIndex) => {
-                        const serviceName = serviceTypes.find(s => s.id === app.service)?.name || '';
+                        const serviceName = servicos.find(s => s.id_servico === app.id_servico)?.descricao || '';
                         return (
                           <div 
                             key={appIndex}
                             className="bg-trinks-blue/10 border-l-4 border-trinks-blue p-2 rounded-r-md text-xs"
                           >
                             <p className="font-medium">{app.time} - {serviceName}</p>
-                            <p>{app.clientName}</p>
+                            <p>{app.cliente?.nome}</p>
                           </div>
                         );
                       })}
@@ -577,7 +614,6 @@ const Schedule: React.FC = () => {
         </div>
       )}
 
-      {/* Diálogo de novo agendamento */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -623,14 +659,49 @@ const Schedule: React.FC = () => {
               <select
                 id="service"
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={newAppointment.service}
-                onChange={(e) => setNewAppointment({...newAppointment, service: parseInt(e.target.value, 10)})}
+                value={newAppointment.serviceId}
+                onChange={(e) => setNewAppointment({...newAppointment, serviceId: parseInt(e.target.value, 10)})}
               >
-                {serviceTypes.map((service) => (
-                  <option key={service.id} value={service.id}>
-                    {service.name} - R${service.price.toFixed(2)} ({service.duration}min)
+                {servicos.map((servico) => (
+                  <option key={servico.id_servico} value={servico.id_servico}>
+                    {servico.descricao} - R${servico.preco.toFixed(2)} ({servico.duracao_minutos}min)
                   </option>
                 ))}
+              </select>
+            </div>
+            
+            <div className="grid gap-2">
+              <label htmlFor="professional" className="text-sm font-medium">
+                Profissional
+              </label>
+              <select
+                id="professional"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={newAppointment.professionalId}
+                onChange={(e) => setNewAppointment({...newAppointment, professionalId: e.target.value})}
+              >
+                {profissionais.map((prof) => (
+                  <option key={prof.id_profissional} value={prof.id_profissional}>
+                    {prof.nome} - {prof.especialidade || 'Barbeiro'}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="grid gap-2">
+              <label htmlFor="origin" className="text-sm font-medium">
+                Origem
+              </label>
+              <select
+                id="origin"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                value={newAppointment.origin}
+                onChange={(e) => setNewAppointment({...newAppointment, origin: e.target.value as 'WhatsApp' | 'Balcão' | 'App' | 'Telefone'})}
+              >
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Balcão">Balcão</option>
+                <option value="App">App</option>
+                <option value="Telefone">Telefone</option>
               </select>
             </div>
             
@@ -676,9 +747,9 @@ const Schedule: React.FC = () => {
                     <option 
                       key={time} 
                       value={time}
-                      disabled={!isTimeAvailable(time, newAppointment.date) && isSameDay(newAppointment.date, currentDate)}
+                      disabled={!isTimeAvailable(time, newAppointment.date, newAppointment.professionalId) && isSameDay(newAppointment.date, currentDate)}
                     >
-                      {time} {!isTimeAvailable(time, newAppointment.date) && isSameDay(newAppointment.date, currentDate) ? '(Ocupado)' : ''}
+                      {time} {!isTimeAvailable(time, newAppointment.date, newAppointment.professionalId) && isSameDay(newAppointment.date, currentDate) ? '(Ocupado)' : ''}
                     </option>
                   ))}
                 </select>
@@ -701,7 +772,6 @@ const Schedule: React.FC = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Diálogo de confirmação */}
       <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

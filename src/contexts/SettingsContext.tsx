@@ -2,11 +2,30 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { toast } from "@/hooks/use-toast";
 
-interface UserProfile {
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
+// Interfaces alinhadas com o schema do banco de dados
+interface Barbearia {
+  id_barbearia?: number;
+  nome: string;
+  endereco?: string;
+  telefone?: string;
+  email?: string;
+  horario_funcionamento?: string;
+}
+
+interface Profissional {
+  id_profissional?: string; // Usando string para compatibilidade com o código atual
+  nome: string;
+  especialidade?: string;
+  ativo: boolean;
+  telefone?: string; // Campo adicional para manter compatibilidade
+  email?: string;    // Campo adicional para manter compatibilidade
+}
+
+interface Servico {
+  id_servico?: number;
+  descricao: string;
+  preco: number;
+  duracao_minutos: number;
 }
 
 interface NotificationPreferences {
@@ -15,34 +34,38 @@ interface NotificationPreferences {
 }
 
 interface SettingsContextType {
-  profile: UserProfile;
-  updateProfile: (profile: UserProfile) => void;
+  barbearia: Barbearia;
+  updateBarbearia: (barbearia: Barbearia) => void;
   notifications: NotificationPreferences;
   updateNotifications: (notifications: NotificationPreferences) => void;
-  professionals: Professional[];
-  addProfessional: (professional: Professional) => void;
-  removeProfessional: (id: string) => void;
+  profissionais: Profissional[];
+  addProfissional: (profissional: Profissional) => void;
+  removeProfissional: (id: string) => void;
+  servicos: Servico[];
+  addServico: (servico: Servico) => void;
+  removeServico: (id: number) => void;
 }
 
-export interface Professional {
-  id: string;
-  name: string;
-  role: string;
-  phone: string;
-  email: string;
-}
-
-const defaultProfile: UserProfile = {
-  name: 'Administrador',
-  email: 'admin@teste12341234.com',
-  phone: '(11) 99999-9999',
-  role: 'Proprietário'
+const defaultBarbearia: Barbearia = {
+  nome: 'Minha Barbearia',
+  endereco: 'Rua Exemplo, 123',
+  telefone: '(11) 99999-9999',
+  email: 'contato@minhababearia.com',
+  horario_funcionamento: 'Seg-Sex: 9h-19h, Sáb: 9h-17h'
 };
 
 const defaultNotifications: NotificationPreferences = {
   email: true,
   sms: false
 };
+
+const defaultServicos: Servico[] = [
+  { id_servico: 1, descricao: 'Corte de cabelo', preco: 35, duracao_minutos: 30 },
+  { id_servico: 2, descricao: 'Barba', preco: 25, duracao_minutos: 20 },
+  { id_servico: 3, descricao: 'Corte e barba', preco: 55, duracao_minutos: 50 },
+  { id_servico: 4, descricao: 'Hidratação', preco: 45, duracao_minutos: 40 },
+  { id_servico: 5, descricao: 'Coloração', preco: 70, duracao_minutos: 60 },
+];
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
@@ -59,27 +82,33 @@ interface SettingsProviderProps {
 }
 
 export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) => {
-  const [profile, setProfile] = useState<UserProfile>(defaultProfile);
+  const [barbearia, setBarbearia] = useState<Barbearia>(defaultBarbearia);
   const [notifications, setNotifications] = useState<NotificationPreferences>(defaultNotifications);
-  const [professionals, setProfessionals] = useState<Professional[]>([]);
+  const [profissionais, setProfissionais] = useState<Profissional[]>([]);
+  const [servicos, setServicos] = useState<Servico[]>(defaultServicos);
 
   // Load saved data from localStorage when component mounts
   useEffect(() => {
     try {
-      const savedProfile = localStorage.getItem('userProfile');
+      const savedBarbearia = localStorage.getItem('barbearia');
       const savedNotifications = localStorage.getItem('notificationPreferences');
-      const savedProfessionals = localStorage.getItem('professionals');
+      const savedProfissionais = localStorage.getItem('profissionais');
+      const savedServicos = localStorage.getItem('servicos');
       
-      if (savedProfile) {
-        setProfile(JSON.parse(savedProfile));
+      if (savedBarbearia) {
+        setBarbearia(JSON.parse(savedBarbearia));
       }
       
       if (savedNotifications) {
         setNotifications(JSON.parse(savedNotifications));
       }
       
-      if (savedProfessionals) {
-        setProfessionals(JSON.parse(savedProfessionals));
+      if (savedProfissionais) {
+        setProfissionais(JSON.parse(savedProfissionais));
+      }
+      
+      if (savedServicos) {
+        setServicos(JSON.parse(savedServicos));
       }
     } catch (error) {
       console.error('Error loading settings from localStorage:', error);
@@ -87,19 +116,19 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     }
   }, []);
 
-  const updateProfile = (newProfile: UserProfile) => {
+  const updateBarbearia = (newBarbearia: Barbearia) => {
     try {
-      setProfile(newProfile);
-      localStorage.setItem('userProfile', JSON.stringify(newProfile));
+      setBarbearia(newBarbearia);
+      localStorage.setItem('barbearia', JSON.stringify(newBarbearia));
       toast({
-        title: "Perfil atualizado",
-        description: "Suas informações foram salvas com sucesso."
+        title: "Dados atualizados",
+        description: "As informações da barbearia foram salvas com sucesso."
       });
     } catch (error) {
-      console.error('Error saving profile to localStorage:', error);
+      console.error('Error saving barbearia to localStorage:', error);
       toast({
         title: "Erro ao salvar",
-        description: "Ocorreu um erro ao salvar suas informações.",
+        description: "Ocorreu um erro ao salvar as informações.",
         variant: "destructive"
       });
     }
@@ -123,14 +152,21 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     }
   };
 
-  const addProfessional = (professional: Professional) => {
+  const addProfissional = (profissional: Profissional) => {
     try {
-      const newProfessionals = [...professionals, professional];
-      setProfessionals(newProfessionals);
-      localStorage.setItem('professionals', JSON.stringify(newProfessionals));
+      // Garantir que o profissional tenha um ID único
+      const profissionalWithId = {
+        ...profissional,
+        id_profissional: profissional.id_profissional || `prof_${Date.now()}`,
+        ativo: profissional.ativo !== undefined ? profissional.ativo : true
+      };
+      
+      const newProfissionais = [...profissionais, profissionalWithId];
+      setProfissionais(newProfissionais);
+      localStorage.setItem('profissionais', JSON.stringify(newProfissionais));
       toast({
         title: "Profissional adicionado",
-        description: `${professional.name} foi adicionado com sucesso.`
+        description: `${profissional.nome} foi adicionado com sucesso.`
       });
     } catch (error) {
       console.error('Error adding professional to localStorage:', error);
@@ -142,16 +178,16 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     }
   };
 
-  const removeProfessional = (id: string) => {
+  const removeProfissional = (id: string) => {
     try {
-      const professional = professionals.find(p => p.id === id);
-      const newProfessionals = professionals.filter(p => p.id !== id);
-      setProfessionals(newProfessionals);
-      localStorage.setItem('professionals', JSON.stringify(newProfessionals));
-      if (professional) {
+      const profissional = profissionais.find(p => p.id_profissional === id);
+      const newProfissionais = profissionais.filter(p => p.id_profissional !== id);
+      setProfissionais(newProfissionais);
+      localStorage.setItem('profissionais', JSON.stringify(newProfissionais));
+      if (profissional) {
         toast({
           title: "Profissional removido",
-          description: `${professional.name} foi removido com sucesso.`
+          description: `${profissional.nome} foi removido com sucesso.`
         });
       }
     } catch (error) {
@@ -163,20 +199,72 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
       });
     }
   };
+  
+  const addServico = (servico: Servico) => {
+    try {
+      // Garantir que o serviço tenha um ID único
+      const servicoWithId = {
+        ...servico,
+        id_servico: servico.id_servico || Date.now()
+      };
+      
+      const newServicos = [...servicos, servicoWithId];
+      setServicos(newServicos);
+      localStorage.setItem('servicos', JSON.stringify(newServicos));
+      toast({
+        title: "Serviço adicionado",
+        description: `${servico.descricao} foi adicionado com sucesso.`
+      });
+    } catch (error) {
+      console.error('Error adding service to localStorage:', error);
+      toast({
+        title: "Erro ao adicionar",
+        description: "Ocorreu um erro ao adicionar o serviço.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const removeServico = (id: number) => {
+    try {
+      const servico = servicos.find(s => s.id_servico === id);
+      const newServicos = servicos.filter(s => s.id_servico !== id);
+      setServicos(newServicos);
+      localStorage.setItem('servicos', JSON.stringify(newServicos));
+      if (servico) {
+        toast({
+          title: "Serviço removido",
+          description: `${servico.descricao} foi removido com sucesso.`
+        });
+      }
+    } catch (error) {
+      console.error('Error removing service from localStorage:', error);
+      toast({
+        title: "Erro ao remover",
+        description: "Ocorreu um erro ao remover o serviço.",
+        variant: "destructive"
+      });
+    }
+  };
 
   return (
     <SettingsContext.Provider
       value={{
-        profile,
-        updateProfile,
+        barbearia,
+        updateBarbearia,
         notifications,
         updateNotifications,
-        professionals,
-        addProfessional,
-        removeProfessional
+        profissionais,
+        addProfissional,
+        removeProfissional,
+        servicos,
+        addServico,
+        removeServico
       }}
     >
       {children}
     </SettingsContext.Provider>
   );
 };
+
+export type { Barbearia, Profissional, Servico };
