@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Calendar as CalendarIcon, Clock, List, ChevronLeft, ChevronRight, Plus, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -776,3 +777,35 @@ const Schedule: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      
+      <Dialog open={isConfirmDialogOpen} onOpenChange={setIsConfirmDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirmação de sobreposição</DialogTitle>
+            <DialogDescription>
+              O horário selecionado já está ocupado. Deseja sobrescrever este agendamento?
+            </DialogDescription>
+          </DialogHeader>
+          
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsConfirmDialogOpen(false)}
+              className="mr-2"
+            >
+              Cancelar
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={processAppointment}
+            >
+              Sobrescrever agendamento
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default Schedule;
