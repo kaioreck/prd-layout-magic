@@ -17,14 +17,14 @@ export const formatPagamentosForExcel = (pagamentos: Pagamento[]) => {
     const status = pagamento.valor_pago >= 0 ? 'Recebido' : 'Pago';
 
     // Formata a forma de pagamento para exibição
-    let formaPagamento = pagamento.forma_pagamento;
-    if (formaPagamento === 'Cartão Crédito') formaPagamento = 'Cartão de Crédito';
-    if (formaPagamento === 'Cartão Débito') formaPagamento = 'Cartão de Débito';
+    let formaPagamentoExibicao = pagamento.forma_pagamento;
+    if (formaPagamento === 'Cartão Crédito') formaPagamentoExibicao = 'Cartão de Crédito';
+    if (formaPagamento === 'Cartão Débito') formaPagamentoExibicao = 'Cartão de Débito';
 
     return {
       'Data': format(new Date(pagamento.data_pagamento), 'dd/MM/yyyy'),
       'Descrição': pagamento.descricao || `Agendamento #${pagamento.id_agendamento}`,
-      'Forma de Pagamento': formaPagamento,
+      'Forma de Pagamento': formaPagamentoExibicao,
       'Profissional': pagamento.nome_profissional || '-',
       'Valor (R$)': valorFormatado,
       'Status': status
