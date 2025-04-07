@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   Home, Calendar, Store, DollarSign, BarChart, 
-  Settings, Users, ChevronRight, ChevronLeft,
+  Settings, ChevronRight, ChevronLeft,
   FileText, PieChart, Activity, ChartBar, X
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -216,13 +216,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
               />
             )}
             
-            <SidebarItem 
-              icon={<Users className="w-5 h-5" />} 
-              label="Meu Plano" 
-              to="/plano" 
-              isActive={isRouteActive('/plano')}
-              onClick={handleItemClick}
-            />
             <SidebarItem 
               icon={<Settings className="w-5 h-5" />} 
               label="Configurações" 

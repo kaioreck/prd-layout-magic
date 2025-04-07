@@ -12,7 +12,6 @@ import ReturnReports from "./pages/ReturnReports";
 import ProductRanking from "./pages/ProductRanking";
 import Schedule from "./pages/Schedule";
 import Establishment from "./pages/Establishment";
-import MyPlan from "./pages/MyPlan";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import MainReports from "./pages/MainReports";
@@ -52,7 +51,6 @@ const App = () => (
                 <Route path="relatorios/pesquisa" element={<SatisfactionSurvey />} />
                 <Route path="relatorios/mapa-calor" element={<HeatMap />} />
                 <Route path="relatorios/retorno" element={<ReturnReports />} />
-                <Route path="plano" element={<MyPlan />} />
                 <Route path="configuracoes" element={<Settings />} />
               </Route>
               <Route path="*" element={<NotFound />} />
