@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Sidebar from './Sidebar';
-import { MessageSquare, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const MainLayout: React.FC = () => {
@@ -32,11 +32,6 @@ const MainLayout: React.FC = () => {
         <main className="flex-1 overflow-y-auto bg-gray-50">
           <Outlet />
         </main>
-      </div>
-      <div className="fixed bottom-8 right-8">
-        <button className="bg-green-500 text-white rounded-full p-3 md:p-4 shadow-lg hover:bg-green-600 transition-colors">
-          <MessageSquare className="w-5 h-5 md:w-6 md:h-6" />
-        </button>
       </div>
     </div>
   );
