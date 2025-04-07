@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ArrowUp, ArrowDown, Info, Plus, FileText, Filter, Calendar, Search, ChevronsUpDown, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,12 +10,13 @@ import { pagamentosMock, profissionais, filtrarPagamentos, calcularResumoFinance
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { exportToExcel } from '@/utils/excelExport';
 
 const FinancialControl: React.FC = () => {
   // Estados para gerenciamento dos filtros e dados
@@ -183,9 +183,32 @@ const FinancialControl: React.FC = () => {
     toast.success('Lançamento registrado com sucesso');
   };
   
-  // Função para exportar dados
+  // Função para exportar dados para Excel
   const exportarDados = () => {
-    toast.success('Dados exportados com sucesso');
+    try {
+      // Nome do arquivo baseado no período selecionado
+      let nomeArquivo;
+      
+      // Gera um nome de arquivo baseado no período selecionado
+      if (periodoSelecionado === 'today') {
+        nomeArquivo = `financeiro_hoje_${format(new Date(), 'dd_MM_yyyy')}`;
+      } else if (periodoSelecionado === 'month') {
+        nomeArquivo = `financeiro_mes_${format(new Date(), 'MM_yyyy')}`;
+      } else if (periodoSelecionado === 'year') {
+        nomeArquivo = `financeiro_ano_${format(new Date(), 'yyyy')}`;
+      } else {
+        nomeArquivo = `financeiro_${format(filtro.dataInicio, 'dd_MM_yyyy')}_a_${format(filtro.dataFim, 'dd_MM_yyyy')}`;
+      }
+      
+      // Exporta os dados filtrados para Excel
+      exportToExcel(pagamentos, nomeArquivo);
+      
+      // Exibe mensagem de sucesso
+      toast.success('Relatório financeiro exportado com sucesso');
+    } catch (error) {
+      console.error('Erro ao exportar dados:', error);
+      toast.error('Ocorreu um erro ao exportar os dados. Tente novamente.');
+    }
   };
 
   return (
@@ -321,8 +344,8 @@ const FinancialControl: React.FC = () => {
             </PopoverContent>
           </Popover>
           
-          <Button variant="outline" onClick={exportarDados}>
-            <Download className="w-4 h-4 mr-2" />
+          <Button variant="outline" onClick={exportarDados} className="flex items-center gap-2">
+            <Download className="w-4 h-4" />
             Exportar
           </Button>
         </div>
