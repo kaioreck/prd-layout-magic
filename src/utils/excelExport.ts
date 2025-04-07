@@ -18,8 +18,8 @@ export const formatPagamentosForExcel = (pagamentos: Pagamento[]) => {
 
     // Formata a forma de pagamento para exibição
     let formaPagamentoExibicao = pagamento.forma_pagamento;
-    if (formaPagamento === 'Cartão Crédito') formaPagamentoExibicao = 'Cartão de Crédito';
-    if (formaPagamento === 'Cartão Débito') formaPagamentoExibicao = 'Cartão de Débito';
+    if (pagamento.forma_pagamento === 'Cartão Crédito') formaPagamentoExibicao = 'Cartão de Crédito';
+    if (pagamento.forma_pagamento === 'Cartão Débito') formaPagamentoExibicao = 'Cartão de Débito';
 
     return {
       'Data': format(new Date(pagamento.data_pagamento), 'dd/MM/yyyy'),
