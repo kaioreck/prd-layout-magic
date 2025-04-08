@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useSettings } from '@/contexts/SettingsContext';
 import { Button } from '@/components/ui/button';
-import { Trash2, Mail, Phone, UserPlus } from 'lucide-react';
+import { Trash2, Mail, Phone, UserPlus, Briefcase, User } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -76,11 +76,15 @@ const ProfessionalsList: React.FC = () => {
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Adicionar Novo Profissional</DialogTitle>
+              <DialogTitle className="flex items-center gap-2">
+                <UserPlus className="h-5 w-5 text-trinks-orange" />
+                Adicionar Novo Profissional
+              </DialogTitle>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="nome" className="text-right">
+            <div className="grid gap-6 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="nome" className="flex items-center gap-2">
+                  <User className="h-3.5 w-3.5 text-gray-500" />
                   Nome *
                 </Label>
                 <Input
@@ -88,12 +92,12 @@ const ProfessionalsList: React.FC = () => {
                   name="nome"
                   value={newProfissional.nome}
                   onChange={handleInputChange}
-                  className="col-span-3"
                   required
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="especialidade" className="text-right">
+              <div className="space-y-2">
+                <Label htmlFor="especialidade" className="flex items-center gap-2">
+                  <Briefcase className="h-3.5 w-3.5 text-gray-500" />
                   Especialidade
                 </Label>
                 <Input
@@ -101,11 +105,11 @@ const ProfessionalsList: React.FC = () => {
                   name="especialidade"
                   value={newProfissional.especialidade}
                   onChange={handleInputChange}
-                  className="col-span-3"
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="telefone" className="text-right">
+              <div className="space-y-2">
+                <Label htmlFor="telefone" className="flex items-center gap-2">
+                  <Phone className="h-3.5 w-3.5 text-gray-500" />
                   Telefone
                 </Label>
                 <Input
@@ -113,11 +117,11 @@ const ProfessionalsList: React.FC = () => {
                   name="telefone"
                   value={newProfissional.telefone}
                   onChange={handleInputChange}
-                  className="col-span-3"
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="email" className="text-right">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="flex items-center gap-2">
+                  <Mail className="h-3.5 w-3.5 text-gray-500" />
                   Email *
                 </Label>
                 <Input
@@ -126,7 +130,6 @@ const ProfessionalsList: React.FC = () => {
                   type="email"
                   value={newProfissional.email}
                   onChange={handleInputChange}
-                  className="col-span-3"
                   required
                 />
               </div>
@@ -135,7 +138,11 @@ const ProfessionalsList: React.FC = () => {
               <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                 Cancelar
               </Button>
-              <Button type="button" onClick={handleAddProfessional}>
+              <Button 
+                type="button" 
+                onClick={handleAddProfessional}
+                className="bg-trinks-orange hover:bg-trinks-orange/90"
+              >
                 Adicionar
               </Button>
             </DialogFooter>
@@ -144,22 +151,38 @@ const ProfessionalsList: React.FC = () => {
       </div>
       
       {profissionais.length === 0 ? (
-        <div className="text-center py-8 border rounded-md bg-gray-50">
-          <p className="text-gray-500">Nenhum profissional cadastrado</p>
-          <p className="text-sm text-gray-400 mt-1">Adicione profissionais à sua equipe</p>
+        <div className="text-center py-12 border rounded-lg bg-gray-50 flex flex-col items-center justify-center gap-2">
+          <User className="h-12 w-12 text-gray-400" />
+          <p className="text-gray-500 font-medium">Nenhum profissional cadastrado</p>
+          <p className="text-sm text-gray-400">Adicione profissionais à sua equipe</p>
         </div>
       ) : (
         <div className="grid gap-4">
           {profissionais.map((profissional) => (
-            <div key={profissional.id_profissional} className="border rounded-md p-4 bg-white flex justify-between items-center">
+            <div 
+              key={profissional.id_profissional} 
+              className="border rounded-lg p-4 bg-white hover:bg-gray-50 transition-colors flex justify-between items-center"
+            >
               <div>
-                <h4 className="font-medium">{profissional.nome}</h4>
-                <p className="text-sm text-gray-500">{profissional.especialidade}</p>
-                <div className="flex items-center gap-4 mt-1">
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Phone className="w-3 h-3 mr-1" />
-                    {profissional.telefone}
-                  </div>
+                <div className="flex items-center gap-2">
+                  <User className="h-5 w-5 text-trinks-orange" />
+                  <h4 className="font-medium">{profissional.nome}</h4>
+                </div>
+                {profissional.especialidade && (
+                  <p className="text-sm text-gray-500 ml-7 mt-1">
+                    <span className="flex items-center gap-1">
+                      <Briefcase className="w-3 h-3" />
+                      {profissional.especialidade}
+                    </span>
+                  </p>
+                )}
+                <div className="flex items-center gap-4 mt-2 ml-7">
+                  {profissional.telefone && (
+                    <div className="flex items-center text-sm text-gray-500">
+                      <Phone className="w-3 h-3 mr-1" />
+                      {profissional.telefone}
+                    </div>
+                  )}
                   <div className="flex items-center text-sm text-gray-500">
                     <Mail className="w-3 h-3 mr-1" />
                     {profissional.email}
@@ -170,6 +193,7 @@ const ProfessionalsList: React.FC = () => {
                 variant="destructive" 
                 size="sm" 
                 onClick={() => handleRemoveProfessional(profissional.id_profissional || '')}
+                className="h-9 opacity-80 hover:opacity-100"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
