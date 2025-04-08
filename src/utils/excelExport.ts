@@ -16,15 +16,19 @@ export const formatPagamentosForExcel = (pagamentos: Pagamento[]) => {
     // Determina o status com base no valor (positivo = Recebido, negativo = Pago)
     const status = pagamento.valor_pago >= 0 ? 'Recebido' : 'Pago';
 
-    // Formata a forma de pagamento para exibição
-    let formaPagamentoExibicao = pagamento.forma_pagamento;
-    if (pagamento.forma_pagamento === 'Cartão Crédito') formaPagamentoExibicao = 'Cartão de Crédito';
-    else if (pagamento.forma_pagamento === 'Cartão Débito') formaPagamentoExibicao = 'Cartão de Débito';
+    // Função para transformar a forma de pagamento em texto amigável para exibição
+    const getFormaPagamentoDisplay = (forma: string): string => {
+      switch(forma) {
+        case 'Cartão Crédito': return 'Cartão de Crédito';
+        case 'Cartão Débito': return 'Cartão de Débito';
+        default: return forma;
+      }
+    };
 
     return {
       'Data': format(new Date(pagamento.data_pagamento), 'dd/MM/yyyy'),
       'Descrição': pagamento.descricao || `Agendamento #${pagamento.id_agendamento}`,
-      'Forma de Pagamento': formaPagamentoExibicao,
+      'Forma de Pagamento': getFormaPagamentoDisplay(pagamento.forma_pagamento),
       'Profissional': pagamento.nome_profissional || '-',
       'Valor (R$)': valorFormatado,
       'Status': status
