@@ -12,7 +12,7 @@ const MainLayout: React.FC = () => {
         <AppSidebar />
         <SidebarInset className="flex flex-col">
           <Header />
-          <main className="flex-1 overflow-y-auto bg-gray-50 p-4">
+          <main className="flex-1 overflow-y-auto bg-gray-50 p-2 md:p-4">
             <Outlet />
           </main>
         </SidebarInset>

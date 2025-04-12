@@ -8,38 +8,38 @@ const Rankings: React.FC = () => {
   const [rankingType, setRankingType] = useState('products');
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Rankings</h1>
-        <p className="text-sm text-gray-500 mt-1">
+    <div className="p-3 sm:p-4 md:p-6">
+      <div className="mb-4 md:mb-6">
+        <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-800">Rankings</h1>
+        <p className="text-xs md:text-sm text-gray-500 mt-1">
           Confira os rankings de desempenho
         </p>
       </div>
 
       <Tabs defaultValue="products" className="mb-6" onValueChange={setRankingType}>
-        <div className="mb-4">
-          <TabsList>
-            <TabsTrigger value="products">Produtos</TabsTrigger>
-            <TabsTrigger value="services">Serviços</TabsTrigger>
-            <TabsTrigger value="professionals">Profissionais</TabsTrigger>
-            <TabsTrigger value="clients">Clientes</TabsTrigger>
+        <div className="mb-4 overflow-x-auto">
+          <TabsList className="w-full md:w-auto">
+            <TabsTrigger value="products" className="text-xs sm:text-sm">Produtos</TabsTrigger>
+            <TabsTrigger value="services" className="text-xs sm:text-sm">Serviços</TabsTrigger>
+            <TabsTrigger value="professionals" className="text-xs sm:text-sm">Profissionais</TabsTrigger>
+            <TabsTrigger value="clients" className="text-xs sm:text-sm">Clientes</TabsTrigger>
           </TabsList>
         </div>
 
         <TabsContent value="products">
-          <div className="flex flex-wrap gap-2 mb-6">
-            <div className="bg-orange-50 border border-orange-200 text-orange-800 px-3 py-2 rounded-md text-sm">
+          <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
+            <div className="bg-orange-50 border border-orange-200 text-orange-800 px-2 py-1 sm:px-3 sm:py-2 rounded-md text-xs sm:text-sm">
               <span>Vendas entre 01/03/2025 e 31/03/2025</span>
             </div>
 
-            <div className="bg-white border border-gray-200 px-3 py-2 rounded-md text-sm">
+            <div className="bg-white border border-gray-200 px-2 py-1 sm:px-3 sm:py-2 rounded-md text-xs sm:text-sm">
               <span>Categorias: Todas</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold mb-4">Top 10 Produtos</h2>
-            <div className="space-y-4">
+          <div className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 md:p-6">
+            <h2 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Top 10 Produtos</h2>
+            <div className="space-y-3 md:space-y-4">
               {[
                 { name: 'Shampoo Profissional 500ml', sales: 87, revenue: 3480 },
                 { name: 'Condicionador Hidratante 500ml', sales: 72, revenue: 2880 },
@@ -52,19 +52,19 @@ const Rankings: React.FC = () => {
                 { name: 'Tintura Permanente', sales: 30, revenue: 2400 },
                 { name: 'Kit Manutenção de Cor', sales: 27, revenue: 2700 }
               ].map((product, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-md hover:bg-gray-50">
-                  <div className="flex items-center gap-3">
-                    <Badge variant="outline" className="h-8 w-8 rounded-full flex items-center justify-center">
+                <div key={index} className="flex items-center justify-between p-2 sm:p-3 border rounded-md hover:bg-gray-50">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Badge variant="outline" className="h-6 w-6 sm:h-8 sm:w-8 rounded-full flex items-center justify-center text-xs">
                       {index + 1}
                     </Badge>
-                    <div>
-                      <p className="font-medium">{product.name}</p>
-                      <p className="text-sm text-gray-500">{product.sales} unidades vendidas</p>
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm sm:text-base truncate">{product.name}</p>
+                      <p className="text-xs text-gray-500">{product.sales} unidades vendidas</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-medium">R$ {product.revenue.toFixed(2)}</p>
-                    <p className="text-sm text-gray-500">em vendas</p>
+                  <div className="text-right ml-2">
+                    <p className="font-medium text-sm sm:text-base">R$ {product.revenue.toFixed(2)}</p>
+                    <p className="text-xs text-gray-500">em vendas</p>
                   </div>
                 </div>
               ))}
@@ -73,15 +73,15 @@ const Rankings: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="services">
-          <div className="flex flex-wrap gap-2 mb-6">
-            <div className="bg-orange-50 border border-orange-200 text-orange-800 px-3 py-2 rounded-md text-sm">
+          <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
+            <div className="bg-orange-50 border border-orange-200 text-orange-800 px-2 py-1 sm:px-3 sm:py-2 rounded-md text-xs sm:text-sm">
               <span>Agendamentos entre 01/03/2025 e 31/03/2025</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold mb-4">Top 10 Serviços</h2>
-            <div className="space-y-4">
+          <div className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 md:p-6">
+            <h2 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Top 10 Serviços</h2>
+            <div className="space-y-3 md:space-y-4">
               {[
                 { name: 'Corte Feminino', count: 145, revenue: 7250 },
                 { name: 'Coloração', count: 98, revenue: 9800 },
@@ -94,19 +94,19 @@ const Rankings: React.FC = () => {
                 { name: 'Limpeza de Pele', count: 51, revenue: 3060 },
                 { name: 'Depilação', count: 43, revenue: 3440 }
               ].map((service, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-md hover:bg-gray-50">
-                  <div className="flex items-center gap-3">
-                    <Badge variant="outline" className="h-8 w-8 rounded-full flex items-center justify-center">
+                <div key={index} className="flex items-center justify-between p-2 sm:p-3 border rounded-md hover:bg-gray-50">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Badge variant="outline" className="h-6 w-6 sm:h-8 sm:w-8 rounded-full flex items-center justify-center text-xs">
                       {index + 1}
                     </Badge>
-                    <div>
-                      <p className="font-medium">{service.name}</p>
-                      <p className="text-sm text-gray-500">{service.count} agendamentos</p>
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm sm:text-base truncate">{service.name}</p>
+                      <p className="text-xs text-gray-500">{service.count} agendamentos</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-medium">R$ {service.revenue.toFixed(2)}</p>
-                    <p className="text-sm text-gray-500">em receita</p>
+                  <div className="text-right ml-2">
+                    <p className="font-medium text-sm sm:text-base">R$ {service.revenue.toFixed(2)}</p>
+                    <p className="text-xs text-gray-500">em receita</p>
                   </div>
                 </div>
               ))}
@@ -115,15 +115,15 @@ const Rankings: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="professionals">
-          <div className="flex flex-wrap gap-2 mb-6">
-            <div className="bg-orange-50 border border-orange-200 text-orange-800 px-3 py-2 rounded-md text-sm">
+          <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
+            <div className="bg-orange-50 border border-orange-200 text-orange-800 px-2 py-1 sm:px-3 sm:py-2 rounded-md text-xs sm:text-sm">
               <span>Atendimentos entre 01/03/2025 e 31/03/2025</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold mb-4">Top 10 Profissionais</h2>
-            <div className="space-y-4">
+          <div className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 md:p-6">
+            <h2 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Top 10 Profissionais</h2>
+            <div className="space-y-3 md:space-y-4">
               {[
                 { name: 'Ana Silva', role: 'Cabeleireira', clients: 68, revenue: 6800 },
                 { name: 'Carlos Santos', role: 'Barbeiro', clients: 64, revenue: 3840 },
@@ -136,19 +136,19 @@ const Rankings: React.FC = () => {
                 { name: 'Carla Souza', role: 'Manicure', clients: 35, revenue: 1750 },
                 { name: 'Rodrigo Pereira', role: 'Barbeiro', clients: 32, revenue: 1920 }
               ].map((professional, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-md hover:bg-gray-50">
-                  <div className="flex items-center gap-3">
-                    <Badge variant="outline" className="h-8 w-8 rounded-full flex items-center justify-center">
+                <div key={index} className="flex items-center justify-between p-2 sm:p-3 border rounded-md hover:bg-gray-50">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Badge variant="outline" className="h-6 w-6 sm:h-8 sm:w-8 rounded-full flex items-center justify-center text-xs">
                       {index + 1}
                     </Badge>
-                    <div>
-                      <p className="font-medium">{professional.name}</p>
-                      <p className="text-sm text-gray-500">{professional.role}</p>
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm sm:text-base truncate">{professional.name}</p>
+                      <p className="text-xs text-gray-500">{professional.role}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-medium">{professional.clients} clientes</p>
-                    <p className="text-sm text-gray-500">R$ {professional.revenue.toFixed(2)} em receita</p>
+                  <div className="text-right ml-2">
+                    <p className="font-medium text-sm sm:text-base">{professional.clients} clientes</p>
+                    <p className="text-xs text-gray-500">R$ {professional.revenue.toFixed(2)} em receita</p>
                   </div>
                 </div>
               ))}
@@ -157,15 +157,15 @@ const Rankings: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="clients">
-          <div className="flex flex-wrap gap-2 mb-6">
-            <div className="bg-orange-50 border border-orange-200 text-orange-800 px-3 py-2 rounded-md text-sm">
+          <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
+            <div className="bg-orange-50 border border-orange-200 text-orange-800 px-2 py-1 sm:px-3 sm:py-2 rounded-md text-xs sm:text-sm">
               <span>Gastos entre 01/03/2025 e 31/03/2025</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold mb-4">Top 10 Clientes</h2>
-            <div className="space-y-4">
+          <div className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 md:p-6">
+            <h2 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Top 10 Clientes</h2>
+            <div className="space-y-3 md:space-y-4">
               {[
                 { name: 'Fernanda Gomes', visits: 7, revenue: 1450 },
                 { name: 'Alexandre Ribeiro', visits: 6, revenue: 1280 },
@@ -178,19 +178,19 @@ const Rankings: React.FC = () => {
                 { name: 'Bianca Costa', visits: 3, revenue: 580 },
                 { name: 'Thiago Oliveira', visits: 3, revenue: 520 }
               ].map((client, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-md hover:bg-gray-50">
-                  <div className="flex items-center gap-3">
-                    <Badge variant="outline" className="h-8 w-8 rounded-full flex items-center justify-center">
+                <div key={index} className="flex items-center justify-between p-2 sm:p-3 border rounded-md hover:bg-gray-50">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Badge variant="outline" className="h-6 w-6 sm:h-8 sm:w-8 rounded-full flex items-center justify-center text-xs">
                       {index + 1}
                     </Badge>
-                    <div>
-                      <p className="font-medium">{client.name}</p>
-                      <p className="text-sm text-gray-500">{client.visits} visitas no período</p>
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm sm:text-base truncate">{client.name}</p>
+                      <p className="text-xs text-gray-500">{client.visits} visitas no período</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-medium">R$ {client.revenue.toFixed(2)}</p>
-                    <p className="text-sm text-gray-500">em gastos</p>
+                  <div className="text-right ml-2">
+                    <p className="font-medium text-sm sm:text-base">R$ {client.revenue.toFixed(2)}</p>
+                    <p className="text-xs text-gray-500">em gastos</p>
                   </div>
                 </div>
               ))}
