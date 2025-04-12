@@ -21,15 +21,15 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarTrigger,
   useSidebar
 } from '@/components/ui/sidebar';
 
 const AppSidebar = () => {
   const location = useLocation();
-  const { state } = useSidebar();
+  const { isMobile } = useSidebar();
+  const [showReportsSubmenu, setShowReportsSubmenu] = React.useState(false);
   
-  // Função para verificar se uma rota está ativa
+  // Check if the current route is active
   const isRouteActive = (path: string) => {
     if (path === '/') {
       return location.pathname === '/';
@@ -37,10 +37,21 @@ const AppSidebar = () => {
     return location.pathname.startsWith(path);
   };
 
-  // Verifica se alguma sub-rota de relatórios está ativa
+  // Check if any reports sub-route is active
   const isReportsActive = location.pathname.includes('/relatorios');
+  
+  // Toggle the reports submenu
+  React.useEffect(() => {
+    if (isReportsActive) {
+      setShowReportsSubmenu(true);
+    }
+  }, [isReportsActive]);
 
-  // Itens do submenu de relatórios
+  const toggleReportsSubmenu = () => {
+    setShowReportsSubmenu(!showReportsSubmenu);
+  };
+
+  // Report submenu items
   const reportSubmenuItems = [
     { 
       label: 'Relatórios Principais', 
@@ -80,12 +91,11 @@ const AppSidebar = () => {
   ];
 
   return (
-    <Sidebar variant="sidebar" collapsible="icon">
+    <Sidebar variant="sidebar" collapsible={isMobile ? "offcanvas" : "none"}>
       <SidebarHeader className="flex items-center justify-between py-4">
         <div className="flex items-center gap-2 px-2">
-          {state === "expanded" && <BarberLogo />}
+          <BarberLogo />
         </div>
-        <SidebarTrigger />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -146,17 +156,17 @@ const AppSidebar = () => {
               
               <SidebarMenuItem>
                 <SidebarMenuButton 
-                  asChild 
                   isActive={isReportsActive}
                   tooltip="Relatórios"
+                  onClick={toggleReportsSubmenu}
                 >
-                  <div>
+                  <div className="flex items-center w-full">
                     <BarChart />
                     <span>Relatórios</span>
-                    <ChevronRight className={`ml-auto transition-transform ${isReportsActive ? 'rotate-90' : ''}`} />
+                    <ChevronRight className={`ml-auto transition-transform ${showReportsSubmenu ? 'rotate-90' : ''}`} />
                   </div>
                 </SidebarMenuButton>
-                {isReportsActive && (
+                {showReportsSubmenu && (
                   <SidebarMenuSub>
                     {reportSubmenuItems.map((item, index) => (
                       <SidebarMenuSubItem key={index}>
@@ -190,9 +200,7 @@ const AppSidebar = () => {
       </SidebarContent>
       <SidebarFooter className="border-t border-sidebar-border/20 p-4">
         <div className="text-center text-sm text-sidebar-foreground/70">
-          {state === "expanded" ? (
-            <p className="text-xs">© 2024 Barber System</p>
-          ) : null}
+          <p className="text-xs">© 2024 Barber System</p>
         </div>
       </SidebarFooter>
     </Sidebar>

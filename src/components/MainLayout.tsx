@@ -7,7 +7,7 @@ import { SidebarProvider, SidebarInset } from './ui/sidebar';
 
 const MainLayout: React.FC = () => {
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={true}>
       <div className="flex h-screen w-full overflow-hidden">
         <AppSidebar />
         <SidebarInset className="flex flex-col">
