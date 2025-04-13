@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Calendar, DollarSign, Users } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Link } from 'react-router-dom';
 
 const DashboardReports: React.FC = () => {
   const isMobile = useIsMobile();
@@ -63,19 +64,25 @@ const DashboardReports: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-        <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-6">
+        <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-6 overflow-hidden">
           <h2 className="text-base md:text-lg font-semibold mb-4">Receita dos últimos 6 meses</h2>
-          <div className="h-60 md:h-80 flex items-center justify-center border border-dashed border-gray-300 rounded-lg">
+          <div className="h-60 md:h-80 flex items-center justify-center border border-dashed border-gray-300 rounded-lg overflow-hidden">
             <p className="text-gray-500">Gráfico de receita será exibido aqui</p>
           </div>
         </div>
         
-        <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-6">
+        <div className="bg-white rounded-lg border border-gray-200 p-3 md:p-6 overflow-hidden">
           <h2 className="text-base md:text-lg font-semibold mb-4">Agendamentos por Serviço</h2>
-          <div className="h-60 md:h-80 flex items-center justify-center border border-dashed border-gray-300 rounded-lg">
+          <div className="h-60 md:h-80 flex items-center justify-center border border-dashed border-gray-300 rounded-lg overflow-hidden">
             <p className="text-gray-500">Gráfico de serviços será exibido aqui</p>
           </div>
         </div>
+      </div>
+
+      <div className="mt-6 text-center">
+        <Link to="/relatorios/principais" className="text-trinks-blue hover:text-trinks-darkBlue text-sm">
+          Ver todos os relatórios
+        </Link>
       </div>
     </div>
   );

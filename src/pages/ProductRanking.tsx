@@ -2,14 +2,23 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const ProductRanking: React.FC = () => {
   return (
     <div className="p-3 sm:p-4 md:p-6">
-      <div className="mb-3 md:mb-6">
-        <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-800">Ranking de Produtos</h1>
-        <div className="bg-gray-100 inline-block rounded-full px-2 py-1 text-xs text-gray-500 mt-1">
-          <span>?</span>
+      <div className="mb-3 md:mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-2">
+        <Link to="/relatorios/rankings" className="flex items-center text-gray-600 hover:text-gray-800 mb-2 sm:mb-0 mr-3">
+          <ArrowLeft className="h-4 w-4 mr-1" />
+          <span className="text-sm">Voltar</span>
+        </Link>
+        
+        <div>
+          <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-800">Ranking de Produtos</h1>
+          <div className="bg-gray-100 inline-block rounded-full px-2 py-1 text-xs text-gray-500 mt-1">
+            <span>?</span>
+          </div>
         </div>
       </div>
 
