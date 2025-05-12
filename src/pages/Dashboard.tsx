@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Calendar, DollarSign, CreditCard, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -53,6 +54,13 @@ const appointmentsData = [
   { name: 'Fev/25', valor: 75 },
 ];
 
+const chartConfig = {
+  revenue: { color: "#4CAF50" },
+  expense: { color: "#F44336" },
+  onlineAppointments: { color: "#2196F3" },
+  appointments: { color: "#9C27B0" }
+};
+
 const Dashboard: React.FC = () => {
   return (
     <div className="p-4 sm:p-6">
@@ -78,7 +86,7 @@ const Dashboard: React.FC = () => {
             <span className="text-xl font-bold">R$ 27.500,00</span>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
+            <ChartContainer config={chartConfig} className="h-[200px]">
               <AreaChart
                 data={revenueData}
                 margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
@@ -95,7 +103,7 @@ const Dashboard: React.FC = () => {
                   fillOpacity={0.3}
                 />
               </AreaChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
         </Card>
 
@@ -111,7 +119,7 @@ const Dashboard: React.FC = () => {
             <span className="text-xl font-bold">R$ 13.600,00</span>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
+            <ChartContainer config={chartConfig} className="h-[200px]">
               <BarChart
                 data={expenseData}
                 margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
@@ -122,7 +130,7 @@ const Dashboard: React.FC = () => {
                 <ChartTooltip content={<ChartTooltipContent formatter={(value) => [`R$ ${value.toLocaleString()}`, 'Valor']}/>} />
                 <Bar dataKey="valor" fill="#F44336" />
               </BarChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
         </Card>
 
@@ -138,7 +146,7 @@ const Dashboard: React.FC = () => {
             <span className="text-xl font-bold">121</span>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
+            <ChartContainer config={chartConfig} className="h-[200px]">
               <LineChart
                 data={onlineAppointmentsData}
                 margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
@@ -156,7 +164,7 @@ const Dashboard: React.FC = () => {
                   activeDot={{ r: 6 }}
                 />
               </LineChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
         </Card>
 
@@ -172,7 +180,7 @@ const Dashboard: React.FC = () => {
             <span className="text-xl font-bold">363</span>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
+            <ChartContainer config={chartConfig} className="h-[200px]">
               <LineChart
                 data={appointmentsData}
                 margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
@@ -190,7 +198,7 @@ const Dashboard: React.FC = () => {
                   activeDot={{ r: 6 }}
                 />
               </LineChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
         </Card>
       </div>
