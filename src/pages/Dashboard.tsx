@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { Calendar, DollarSign, CreditCard, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import {
   Area,
+  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
